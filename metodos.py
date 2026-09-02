@@ -13,6 +13,77 @@ def contador(func):
     wrapper.n = 0
     return wrapper
 
+def bisseccao (f , a , b , eps=1e-8, max_iter =200) :
+    """ Retorna (raiz , historico )."""
+
+    g = contador(f)
+
+    fa = g(a)
+    fb = g(b)
+    
+    if(fa * fb >= 0):
+        raise(ValueError(f"O intervalo passado não contempla um zero para a função f: f(a) * f(b) = {fa * fb}"))
+    hist = []
+    for k in range(max_iter):
+        x = (a + b)/2
+        fx = g(x)
+        hist.append({
+            "k": k
+            , "x": x
+            , "fx": fx
+            , "erro": (b-a)/2.0
+        })
+        if (abs(fx) < eps or (b-a)/2.0 < eps):
+            print(f"Total de chamadas -> f: {g.n}")
+            return (x, hist)
+        elif fa * fx < 0:
+            b = x
+            fb = fx
+        else:
+            a = x
+            fa = fx
+    print(f"Aviso: Número máximo de iterações ({max_iter}) atingido sem convergência.")
+    print(f"Total de chamadas -> f: {g.n}")
+    return (x, hist)
+
+def newton(f, df, x0, eps=1e-8, max_iter=200):
+    """Retorna (raiz, historico)."""
+    
+    f = contador(f)
+    df = contador(df)
+    
+    historico = []
+    xk = float(x0)
+    fx = f(x0)
+    
+    for k in range(max_iter):
+        dfx = df(xk)
+        
+        if abs(dfx) < 1e-15:
+            raise ValueError(f"Derivada nula ou extremamente próxima de zero em x_{k} = {xk}.")
+        
+        x_next = xk - (fx / dfx)
+        fx_next = f(x_next)
+        erro = abs(x_next - xk)
+        
+        historico.append({
+            "k": k,
+            "x": x_next,
+            "fx": fx_next,
+            "erro": erro
+        })
+        
+        if erro < eps or abs(fx_next) < eps:
+            print(f"Total de chamadas -> f: {f.n}, df: {df.n}")
+            return x_next, historico  
+        
+        xk = x_next
+        fx = fx_next
+        
+    print(f"Aviso: Número máximo de iterações ({max_iter}) atingido sem convergência.")
+    print(f"Total de chamadas -> f: {f.n}, df: {df.n}")
+    return xk, historico
+
 def secante(f, x0, x1, eps=1e-8, max_iter=200):
     """Método da secante.
 
@@ -70,3 +141,11 @@ if __name__ == "__main__":
     r3, h3 = secante(f, 0, 1)
 
     print("Secante:  ", r3, "em", len(h3) - 1, "iterações")
+
+    r3, h3 = bisseccao(f, 0, 1)
+
+    print("Bisseccao:  ", r3, "em", len(h3) - 1, "iterações")
+
+    r3, h3 = newton(f, df, 0)
+
+    print("Bisseccao:  ", r3, "em", len(h3) - 1, "iterações")
