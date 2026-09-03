@@ -9,7 +9,7 @@ Funcao-teste padrao da Parte 2: f(x) = x^3 - 9x + 3, raiz em (0,1).
 import math
 import pandas as pd
 
-from metodos import bisseccao, newton, secante, newton, secante
+from metodos import bisseccao, newton, secante, newton
 
 
 def previsao_bisseccao(a0, b0, eps):
