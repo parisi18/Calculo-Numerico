@@ -9,7 +9,7 @@ Funcao-teste padrao da Parte 2: f(x) = x^3 - 9x + 3, raiz em (0,1).
 import math
 import pandas as pd
 
-from metodos import bisseccao
+from metodos import bisseccao, newton, secante, newton, secante
 
 
 def previsao_bisseccao(a0, b0, eps):
@@ -46,5 +46,104 @@ def exercicio_2_2():
     return df
 
 
+def exercicio_2_3():
+    """Custo real: avaliacoes de funcao.
+
+    Encontra a raiz de f(x) = x^3 - 9x + 3 em (0,1) com eps=1e-8 pelos
+    tres metodos e compara iteracoes x avaliacoes de f (e de f').
+
+    Chutes iniciais:
+      - Bisseccao: intervalo [0, 1] (mesmo da Parte 2).
+      - Newton:    x0 = 0.5 (ponto medio do intervalo, chute neutro).
+      - Secante:   x0 = 0, x1 = 1 (extremos do mesmo intervalo).
+    """
+    f = lambda x: x**3 - 9 * x + 3
+    df = lambda x: 3 * x**2 - 9
+    eps = 1e-8
+
+    raiz_b, hist_b = bisseccao(f, 0.0, 1.0, eps=eps)
+    raiz_n, hist_n = newton(f, df, 0.5, eps=eps)
+    raiz_s, hist_s = secante(f, 0.0, 1.0, eps=eps)
+
+    linhas = [
+        {
+            "metodo": "Bisseccao",
+            "iteracoes": hist_b[-1]["k"] + 1,
+            "avaliacoes_f": hist_b[-1]["avaliacoes_f"],
+            "avaliacoes_df": "-",
+            "raiz": raiz_b,
+        },
+        {
+            "metodo": "Newton",
+            "iteracoes": hist_n[-1]["k"] + 1,
+            "avaliacoes_f": hist_n[-1]["avaliacoes_f"],
+            "avaliacoes_df": hist_n[-1]["avaliacoes_df"],
+            "raiz": raiz_n,
+        },
+        {
+            "metodo": "Secante",
+            "iteracoes": hist_s[-1]["k"] + 1,
+            "avaliacoes_f": hist_s[-1]["avaliacoes_f"],
+            "avaliacoes_df": "-",
+            "raiz": raiz_s,
+        },
+    ]
+
+    df_tab = pd.DataFrame(linhas)
+    print(df_tab.to_string(index=False))
+    return df_tab
+
+
+def exercicio_2_3():
+    """Custo real: avaliacoes de funcao.
+
+    Encontra a raiz em (0,1) com eps=1e-8 pelos tres metodos e compara
+    iteracoes x avaliacoes de f (e de f' no caso do Newton).
+
+    Chutes iniciais: bisseccao usa o intervalo [0,1] (o mesmo do
+    isolamento feito em 2.1). Newton parte do ponto medio x0=0.5 do
+    mesmo intervalo. A secante parte dos dois extremos x0=0, x1=1,
+    para manter a comparacao justa (mesma informacao de partida que a
+    bisseccao).
+    """
+    f = lambda x: x**3 - 9 * x + 3
+    df = lambda x: 3 * x**2 - 9
+    eps = 1e-8
+
+    raiz_b, hist_b = bisseccao(f, 0, 1, eps=eps)
+    raiz_n, hist_n = newton(f, df, 0.5, eps=eps)
+    raiz_s, hist_s = secante(f, 0, 1, eps=eps)
+
+    linhas = [
+        {
+            "metodo": "Bisseccao",
+            "iteracoes": hist_b[-1]["k"] + 1,
+            "avaliacoes_f": hist_b[-1]["avaliacoes_f"],
+            "avaliacoes_df": 0,
+            "raiz": raiz_b,
+        },
+        {
+            "metodo": "Newton",
+            "iteracoes": hist_n[-1]["k"] + 1,
+            "avaliacoes_f": hist_n[-1]["avaliacoes_f"],
+            "avaliacoes_df": hist_n[-1]["avaliacoes_df"],
+            "raiz": raiz_n,
+        },
+        {
+            "metodo": "Secante",
+            "iteracoes": hist_s[-1]["k"] + 1,
+            "avaliacoes_f": hist_s[-1]["avaliacoes_f"],
+            "avaliacoes_df": 0,
+            "raiz": raiz_s,
+        },
+    ]
+
+    df_tab = pd.DataFrame(linhas)
+    print(df_tab.to_string(index=False))
+    return df_tab
+
+
 if __name__ == "__main__":
     exercicio_2_2()
+    print()
+    exercicio_2_3()
