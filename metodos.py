@@ -24,7 +24,7 @@ def bisseccao(f, a, b, eps=1e-8, max_iter=200):
 
     # Comparação por sinal em vez de multiplicação: evita problemas de
     # underflow quando fa e fb são muito pequenos (fa*fb -> 0.0).
-    if (fa > 0) == (fb > 0):
+    if (fa * fb >= 0):
         raise ValueError(
             f"O intervalo passado não contempla um zero para a função f: "
             f"f(a)={fa}, f(b)={fb} têm o mesmo sinal."
