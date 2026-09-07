@@ -45,7 +45,7 @@ def bisseccao(f, a, b, eps=1e-8, max_iter=200):
             "avaliacoes_f": g.n,
         })
         if abs(fx) < eps or erro < eps:
-            print(f"Total de chamadas -> f: {g.n}")
+            #print(f"Total de chamadas -> f: {g.n}")
             return x, hist
         elif (fa > 0) != (fx > 0):
             b = x
@@ -55,7 +55,7 @@ def bisseccao(f, a, b, eps=1e-8, max_iter=200):
             fa = fx
 
     print(f"Aviso: Número máximo de iterações ({max_iter}) atingido sem convergência.")
-    print(f"Total de chamadas -> f: {g.n}")
+    #print(f"Total de chamadas -> f: {g.n}")
     return x, hist
 
 
@@ -91,14 +91,14 @@ def newton(f, df, x0, eps=1e-8, max_iter=200):
         })
 
         if erro < eps or abs(fx_next) < eps:
-            print(f"Total de chamadas -> f: {f.n}, df: {df.n}")
+            #print(f"Total de chamadas -> f: {f.n}, df: {df.n}")
             return x_next, historico
 
         xk = x_next
         fx = fx_next
 
     print(f"Aviso: Número máximo de iterações ({max_iter}) atingido sem convergência.")
-    print(f"Total de chamadas -> f: {f.n}, df: {df.n}")
+    #print(f"Total de chamadas -> f: {f.n}, df: {df.n}")
     return xk, historico
 
 
@@ -153,7 +153,7 @@ def secante(f, x0, x1, eps=1e-8, max_iter=200):
     if not convergiu:
         print(f"[secante] AVISO: não convergiu em {max_iter} iterações "
               f"(eps={eps}). Retornando melhor valor encontrado.")
-    print(f"Total de chamadas -> f: {g.n}")
+    #print(f"Total de chamadas -> f: {g.n}")
 
     return x2, historico
 
