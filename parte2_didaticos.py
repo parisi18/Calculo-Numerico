@@ -10,7 +10,7 @@ import math
 import pandas as pd
 import numpy as np
 
-from metodos import bisseccao, newton, secante, newton
+from metodos import contador, bisseccao, newton, secante
 
 
 def previsao_bisseccao(a0, b0, eps):
@@ -175,6 +175,140 @@ def exercicio_2_3():
     return df_tab
 
 
+def newton_modificado(f, df, x0, m, eps=1e-8, max_iter=200):
+    """Newton modificado para acelerar a convergencia numa raiz de
+    multiplicidade m conhecida: x_{k+1} = x_k - m*f(x_k)/f'(x_k)."""
+    g = contador(f)
+    dg = contador(df)
+    historico = []
+    xk = float(x0)
+    fx = g(xk)
+    for k in range(max_iter):
+        dfx = dg(xk)
+        if abs(dfx) < 1e-15:
+            raise ValueError(f"Derivada nula em x_{k} = {xk}.")
+        x_next = xk - m * fx / dfx
+        fx_next = g(x_next)
+        erro = abs(x_next - xk)
+        historico.append({
+            "k": k, "x": x_next, "fx": fx_next, "erro": erro,
+            "avaliacoes_f": g.n, "avaliacoes_df": dg.n,
+        })
+        if erro < eps or abs(fx_next) < eps:
+            return x_next, historico
+        xk, fx = x_next, fx_next
+    return xk, historico
+
+
+def exercicio_2_6():
+    print("### 2.6 - Raiz multipla ###\n")
+
+    f = lambda x: (x - 2) ** 2 * (x + 1)
+    df = lambda x: 3 * x * (x - 2)  # f'(x) simplificado
+    raiz = 2.0
+
+    r, h = newton(f, df, 3.0, eps=1e-300, max_iter=10)  # eps ridiculo forca as 10 iteracoes
+    print("Newton padrao, x0=3:")
+    erros = [abs(3.0 - raiz)] + [abs(it["x"] - raiz) for it in h]
+    for k in range(len(h)):
+        ek1 = erros[k + 1]
+        razao = erros[k + 1] / erros[k] if erros[k] != 0 else float("nan")
+        print(f"  k={h[k]['k']:2d}  x={h[k]['x']:.10f}  e_k={ek1:.6e}  e_k+1/e_k={razao:.5f}")
+    print(
+        "  A convergencia NAO e quadratica: o erro so cai por um fator ~0.5\n"
+        "  a cada passo (linear), e a razao e_k+1/e_k converge para 0.5 =\n"
+        "  (m-1)/m com m=2 - exatamente a taxa teorica de Newton numa raiz\n"
+        "  dupla.\n"
+    )
+
+    r2, h2 = newton_modificado(f, df, 3.0, m=2, eps=1e-14, max_iter=10)
+    print("Newton modificado (m=2), x0=3:")
+    erros2 = [abs(3.0 - raiz)] + [abs(it["x"] - raiz) for it in h2]
+    for k in range(len(h2)):
+        print(f"  k={h2[k]['k']:2d}  x={h2[k]['x']:.12f}  e_k={erros2[k+1]:.3e}")
+    print(
+        "  Com o fator m=2 a convergencia quadratica e restaurada (o\n"
+        "  numero de digitos corretos praticamente dobra a cada passo:\n"
+        "  0.11 -> 2e-3 -> 6e-7 -> 7e-14)."
+    )
+
+
+def _bisseccao_sem_validacao(f, a, b, eps, criterio, max_iter=200):
+    """ATENCAO: versao auxiliar SEM a validacao f(a)*f(b)<0, usada so
+    para demonstrar (didaticamente) o que aconteceria se alguem ignorasse
+    essa validacao. NAO substitui metodos.bisseccao."""
+    g = contador(f)
+    fa = g(a)
+    hist = []
+    x = a
+    for k in range(max_iter):
+        x = (a + b) / 2.0
+        fx = g(x)
+        erro_intervalo = (b - a) / 2.0
+        hist.append({"k": k, "x": x, "fx": fx, "erro": erro_intervalo})
+        if criterio == "residuo" and abs(fx) < eps:
+            return x, hist
+        if criterio == "passo" and erro_intervalo < eps:
+            return x, hist
+        if (fa > 0) != (fx > 0):
+            b = x
+        else:
+            a, fa = x, fx
+    return x, hist
+
+
+def exercicio_2_7():
+    print("### 2.7 - A armadilha do residuo ###\n")
+
+    f = lambda x: (x - 1) ** 10
+    print(f"f(1.1) = {f(1.1):.6e}")
+    print(f"f(1.3) = {f(1.3):.6e}")
+    print(
+        "Mesmo x=1.1 e x=1.3 estando a 0.1 e 0.3 de distancia real da raiz,\n"
+        "o residuo e absurdamente pequeno (1e-10 e 5.9e-6) por causa do\n"
+        "expoente 10 - perto de uma raiz de multiplicidade alta a funcao fica\n"
+        "achatada, entao |f(x)| PEQUENO nao quer dizer x PERTO da raiz.\n"
+    )
+
+    print("Tentando bisseccao(f, 0, 1.5) com o metodos.py oficial:")
+    try:
+        bisseccao(f, 0, 1.5, eps=1e-8)
+    except ValueError as e:
+        print("  ValueError:", e)
+    print(
+        "  f(x)=(x-1)^10 e sempre >= 0 (expoente par) - NUNCA muda de sinal,\n"
+        "  entao a validacao obrigatoria do metodos.py corretamente recusa\n"
+        "  o intervalo antes mesmo de comecar. Essa e a primeira e mais\n"
+        "  importante licao: bisseccao pura nem se aplica a raizes de\n"
+        "  multiplicidade par.\n"
+    )
+
+    print("Bypassando a validacao so para ver o que aconteceria (didatico):")
+    r1, h1 = _bisseccao_sem_validacao(f, 0, 1.5, 1e-8, "residuo")
+    print(f"  criterio |f(x)|<1e-8:      x={r1:.6f}  iters={len(h1)}  erro real |x-1|={abs(r1-1):.3e}")
+    r2, h2 = _bisseccao_sem_validacao(f, 0, 1.5, 1e-8, "passo")
+    print(f"  criterio |xk+1-xk|<1e-8:   x={r2:.6f}  iters={len(h2)}  erro real |x-1|={abs(r2-1):.3e}")
+    print(
+        "\nDiscussao final:\n"
+        "  - Com o criterio do residuo, o algoritmo 'declara vitoria' em\n"
+        "    x=1.125 (erro real de 0.125!) porque |f(1.125)|~5.6e-10 < eps -\n"
+        "    o residuo mente descaradamente sobre a precisao.\n"
+        "  - Com o criterio do passo, o algoritmo nao mente, mas tambem nao\n"
+        "    acha a raiz: como fa e fx tem sempre o MESMO sinal (nunca ha\n"
+        "    troca), o codigo sempre atualiza a=x e caminha numa unica\n"
+        "    direcao ate encostar em b=1.5, sem nenhuma relacao com a raiz\n"
+        "    real em x=1.\n"
+        "  - Conclusao: o criterio do residuo e perigoso quando |f'(raiz)| e\n"
+        "    muito pequeno (funcao achatada perto da raiz, tipico de raizes\n"
+        "    multiplas) - um |f(x)| minusculo pode conviver com um erro em x\n"
+        "    grande. Ele so e confiavel/adequado quando |f'(raiz)| e de\n"
+        "    ordem 1 ou maior (funcao 'inclinada' perto da raiz), caso em\n"
+        "    que um residuo pequeno realmente implica x proximo da raiz -\n"
+        "    exatamente a situacao da f(x)=x^3-9x+3 usada nos exercicios\n"
+        "    2.2/2.3, onde |f'(xi)|=8.66."
+    )
+
+
 if __name__ == "__main__":
     exercicio_2_1()
     print()
@@ -312,3 +446,8 @@ O método divergiu, pois, geometricamente, escolher x0 como raiz quadrada de tr�
 perfeitamente horizontal (paralela ao eixo $x$). Como uma linha horizontal nunca intercepta o eixo x, o algoritmo perde a referência 
 geométrica de onde projetar o próximo passo, impossibilitando totalmente a continuidade do método.
         """)
+
+    print()
+    exercicio_2_6()
+    print()
+    exercicio_2_7()
