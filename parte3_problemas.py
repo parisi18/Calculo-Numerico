@@ -1,14 +1,19 @@
 """
 parte3_problemas.py
 
-Resolucao do Problema A (Reservatorio esferico) da Parte 3 do TC1.
+Resolucao dos Problemas A (Reservatorio esferico) e C (van der Waals) da
+Parte 3 do TC1.
 
-O codigo segue explicitamente os 5 passos exigidos no enunciado:
-  1) deducao de f(x);
-  2) Fase I - isolamento (tabelamento e/ou grafico);
-  3) justificativa do metodo e do chute inicial;
-  4) resultado com unidade fisica e algarismos significativos coerentes;
-  5) verificacao substituindo a raiz no problema original.
+Cada problema segue, na ordem, os 5 passos obrigatorios do enunciado:
+  PASSO 1 - Deducao de f(x) (a funcao cuja raiz resolve o problema)
+  PASSO 2 - Fase I: isolamento explicito da raiz (tabelamento e/ou grafico)
+  PASSO 3 - Justificativa da escolha do metodo e do chute/intervalo inicial
+  PASSO 4 - Resultado, com unidade fisica e algarismos significativos
+            coerentes com os dados de entrada
+  PASSO 5 - Verificacao: substituicao da raiz de volta no problema original
+
+Apos os 5 passos, cada problema traz uma secao de "analise complementar"
+com os itens especificos pedidos no enunciado (ex.: A.2/A.3, C.2/C.3/C.4).
 """
 
 import math
@@ -18,7 +23,7 @@ import matplotlib
 matplotlib.use("Agg")  # backend sem tela, so para salvar as figuras
 import matplotlib.pyplot as plt
 
-from metodos import bisseccao
+from metodos import bisseccao, newton
 
 
 # =======================================================================
@@ -39,45 +44,79 @@ def tabelar_sinais(f, a, b, n):
     return intervalos
 
 
+def cabecalho_passo(n, titulo):
+    print(f"\n--- PASSO {n}: {titulo} ---")
+
+
 # =======================================================================
 # Problema A - Reservatorio esferico
 # =======================================================================
 
 def problema_A():
-    print("### Problema A - Reservatorio esferico ###\n")
+    print("### Problema A - Reservatorio esferico ###")
 
-    R = 3.0        # m
-    V_alvo = 40.0  # m^3
+    R = 3.0        # m (raio do reservatorio)
+    V_alvo = 40.0  # m^3 (volume desejado)
 
-    # 1) f(h): volume da calota menos o volume desejado
+    # --------------------------------------------------------------
+    cabecalho_passo(1, "Deducao de f(h)")
+    # --------------------------------------------------------------
+    print(
+        "  O volume de liquido ate a altura h e V(h) = pi*h^2*(3R-h)/3.\n"
+        "  Queremos V(h) = 40 m^3, portanto a raiz procurada e a de\n"
+        "      f(h) = V(h) - 40 = pi*h^2*(3R-h)/3 - 40 = 0"
+    )
     V = lambda h: math.pi * h**2 * (3 * R - h) / 3.0
     f = lambda h: V(h) - V_alvo
-    df = lambda h: math.pi * (2 * R * h - h**2)  # dV/dh
 
     V_max = V(2 * R)
-    print(f"Volume total da esfera (h=2R=6.0 m): {V_max:.4f} m^3 "
-          f"(o alvo de 40 m^3 cabe dentro do reservatorio: OK)\n")
+    print(f"  Volume total da esfera (h=2R=6.0 m): {V_max:.4f} m^3 "
+          f"(o alvo de 40 m^3 cabe dentro do reservatorio: OK)")
 
-    # --- A.1: altura fisica (0 <= h <= 2R), erro < 1 mm --------------
-    print("A.1) Fase I - tabelamento de sinais de f(h)=V(h)-40 em [0, 6] m:")
+    # --------------------------------------------------------------
+    cabecalho_passo(2, "Fase I - isolamento da raiz")
+    # --------------------------------------------------------------
+    print("  Tabelamento de sinais de f(h) em [0, 2R] = [0, 6] m (13 pontos):")
     ivs_fis = tabelar_sinais(f, 0.0, 2 * R, 13)
     print(f"  Intervalos com mudanca de sinal: {ivs_fis}")
     a, b = ivs_fis[0]
+    print(f"  -> raiz fisica isolada em [{a:.3f}, {b:.3f}] m")
+
+    # --------------------------------------------------------------
+    cabecalho_passo(3, "Justificativa do metodo e do chute inicial")
+    # --------------------------------------------------------------
     print(
-        f"\n  Metodo escolhido: bisseccao, pelo intervalo fisico [{a:.3f},"
-        f" {b:.3f}] ja isolado e por V(h) ser monotona crescente em [0,2R]\n"
-        f"  (garante convergencia robusta sem risco de sair do dominio fisico)."
+        f"  Metodo escolhido: BISSECCAO, usando o intervalo [{a:.3f}, {b:.3f}]\n"
+        f"  ja isolado no Passo 2. Justificativa: dV/dh = pi*h*(2R-h) > 0 para\n"
+        f"  0<h<2R, ou seja, V(h) e estritamente MONOTONA CRESCENTE em todo o\n"
+        f"  dominio fisico - a bisseccao e garantidamente robusta aqui (nao ha\n"
+        f"  risco de o intervalo escolhido nao conter a raiz fisica), o que\n"
+        f"  compensa sua convergencia mais lenta."
     )
-    eps_h = 1e-4  # bem abaixo de 1 mm = 1e-3 m
+
+    # --------------------------------------------------------------
+    cabecalho_passo(4, "Resultado")
+    # --------------------------------------------------------------
+    eps_h = 1e-4  # bem abaixo da exigencia de 1 mm = 1e-3 m
     h1, hist1 = bisseccao(f, a, b, eps=eps_h)
-    print(f"\n  Resultado: h = {h1:.4f} m  "
-          f"(criterio: |f(x)|<{eps_h:g} ou passo<{eps_h:g}; "
+    print(f"  h = {h1:.3f} m")
+    print(f"  (criterio de parada: |f(x)|<{eps_h:g} ou passo<{eps_h:g} m; "
           f"{hist1[-1]['k']+1} iteracoes)")
-    print(f"  Verificacao: V({h1:.4f}) = {V(h1):.6f} m^3  "
-          f"(alvo = {V_alvo} m^3, residuo = {f(h1):.2e})\n")
+
+    # --------------------------------------------------------------
+    cabecalho_passo(5, "Verificacao")
+    # --------------------------------------------------------------
+    print(f"  V({h1:.3f}) = {V(h1):.6f} m^3  "
+          f"(alvo = {V_alvo} m^3, residuo = {f(h1):.2e} m^3)")
+    print("  A altura obtida reproduz o volume desejado dentro da tolerancia.")
+
+    # ================================================================
+    # Analise complementar (itens especificos do enunciado A.2 e A.3)
+    # ================================================================
+    print("\n=== Analise complementar ===")
 
     # --- A.2: as tres raizes reais da cubica --------------------------
-    print("A.2) Tabelamento amplo para achar as 3 raizes reais da cubica:")
+    print("\nA.2) Tabelamento amplo para achar as 3 raizes reais da cubica:")
     ivs_todas = tabelar_sinais(f, -5.0, 12.0, 350)
     print(f"  Intervalos encontrados: {ivs_todas}")
 
@@ -98,7 +137,7 @@ def problema_A():
         "    V(h) volta a CRESCER sem limite para h>2R, o que fisicamente\n"
         "    nao tem sentido (o reservatorio esta cheio em h=2R e nao ha\n"
         "    'mais volume' para h maior). A restricao 0<=h<=2R a elimina.\n"
-        "  - Apenas a raiz dentro de [0, 2R] (a do item A.1) e fisicamente\n"
+        "  - Apenas a raiz dentro de [0, 2R] (a do Passo 4) e fisicamente\n"
         "    valida."
     )
 
@@ -130,7 +169,159 @@ def problema_A():
         "  a dizer que, para um mesmo incremento de V, dh = dV/(dV/dh) e\n"
         "  MENOR no meio (curva mais achatada/plana) e MAIOR perto das\n"
         "  pontas (h perto de 0 ou de 2R), onde a esfera 'estreita' e um\n"
-        "  pequeno volume extra ja faz o nivel subir bastante.\n"
+        "  pequeno volume extra ja faz o nivel subir bastante."
+    )
+
+
+# =======================================================================
+# Problema C - Equacao de van der Waals
+# =======================================================================
+
+def problema_C():
+    print("\n\n### Problema C - Equacao de van der Waals (CO2) ###")
+
+    Rg = 8.314       # J/(mol K)
+    a_vdw = 0.3640   # Pa m^6/mol^2
+    b_vdw = 4.267e-5  # m^3/mol
+    T = 300.0        # K
+    P = 5.0e6        # Pa
+    Tc = 304.2       # K (temperatura critica do CO2)
+
+    # --------------------------------------------------------------
+    cabecalho_passo(1, "Deducao de f(v)")
+    # --------------------------------------------------------------
+    print(
+        "  Equacao de van der Waals: (P + a/v^2)(v - b) = RT.\n"
+        "  Multiplicando por v^2 e rearranjando, obtem-se a forma\n"
+        "  polinomial (cubica em v) cuja raiz e o volume molar procurado:\n"
+        "      f(v) = P*v^3 - (P*b + R*T)*v^2 + a*v - a*b = 0"
+    )
+    f = lambda v: P * v**3 - (P * b_vdw + Rg * T) * v**2 + a_vdw * v - a_vdw * b_vdw
+    df = lambda v: 3 * P * v**2 - 2 * (P * b_vdw + Rg * T) * v + a_vdw
+
+    v_ideal = Rg * T / P
+    print(f"  Referencia de gas ideal (v=RT/P): v_ideal = {v_ideal:.4e} m^3/mol")
+
+    # --------------------------------------------------------------
+    cabecalho_passo(2, "Fase I - isolamento da raiz")
+    # --------------------------------------------------------------
+    print(
+        "  Os valores de v sao da ordem de 1e-4 m^3/mol: um tabelamento\n"
+        "  linear seria ou grosseiro demais ou exigiria pontos demais.\n"
+        "  Por isso usamos espacamento LOGARITMICO em [1e-5, 1e-2] m^3/mol\n"
+        "  (400 pontos):"
+    )
+    vs_log = np.logspace(-5, -2, 400)
+    ys = [f(v) for v in vs_log]
+    ivs = []
+    for i in range(len(vs_log) - 1):
+        if (ys[i] > 0) != (ys[i + 1] > 0):
+            ivs.append((vs_log[i], vs_log[i + 1]))
+    print(f"  Intervalos com mudanca de sinal: {ivs}")
+    print(
+        f"  -> apenas UMA raiz real positiva e detectada nessa faixa, "
+        f"isolada em\n     [{ivs[0][0]:.4e}, {ivs[0][1]:.4e}] m^3/mol, "
+        f"proxima de v_ideal (fase vapor)."
+    )
+
+    # --------------------------------------------------------------
+    cabecalho_passo(3, "Justificativa do metodo e do chute inicial")
+    # --------------------------------------------------------------
+    print(
+        "  Metodo escolhido: NEWTON. Justificativa: f'(v) = 3Pv^2 -\n"
+        "  2(Pb+RT)v + a e um polinomio simples, barato e imediato de\n"
+        "  derivar analiticamente (sem risco de erro de derivacao), e\n"
+        f"  Newton converge quadraticamente quando o chute e bom.\n"
+        f"  Chute inicial: x0 = v_ideal = {v_ideal:.4e} m^3/mol - razoavel\n"
+        f"  porque, na faixa de P moderada do problema, o comportamento\n"
+        f"  real do gas nao deve se afastar muito do modelo ideal, e o\n"
+        f"  Passo 2 confirmou que a raiz fisica esta de fato proxima desse\n"
+        f"  valor."
+    )
+
+    # --------------------------------------------------------------
+    cabecalho_passo(4, "Resultado")
+    # --------------------------------------------------------------
+    v_root, hist = newton(f, df, v_ideal, eps=1e-6 * v_ideal)
+    print(f"  v = {v_root:.3e} m^3/mol  (3 algarismos significativos, "
+          f"coerente com a e b dados com 3-4 algarismos)")
+    print(f"  ({hist[-1]['k']+1} iteracoes)")
+    erro_pct_ideal = abs(v_ideal - v_root) / v_root * 100
+    print(f"  Erro percentual do modelo de gas ideal em relacao a esse "
+          f"resultado: {erro_pct_ideal:.1f} %")
+
+    # --------------------------------------------------------------
+    cabecalho_passo(5, "Verificacao")
+    # --------------------------------------------------------------
+    lado_esquerdo = (P + a_vdw / v_root**2) * (v_root - b_vdw)
+    lado_direito = Rg * T
+    print(f"  Substituindo na equacao original (P + a/v^2)(v - b):")
+    print(f"    lado esquerdo = {lado_esquerdo:.4f} J/mol")
+    print(f"    lado direito (RT) = {lado_direito:.4f} J/mol")
+    print(f"  Residuo do polinomio: f(v) = {f(v_root):.3e} (~0). "
+          f"Raiz verificada.")
+
+    # ================================================================
+    # Analise complementar (itens especificos do enunciado C.2, C.3, C.4)
+    # ================================================================
+    print("\n=== Analise complementar ===")
+
+    # C.2) Numero de raizes reais (ja obtido no Passo 2, reexibido aqui)
+    print(
+        f"\nC.2) Como visto no Passo 2, nas condicoes de T=300K e P=5MPa "
+        f"existe\n  apenas 1 raiz real positiva no intervalo investigado "
+        f"[1e-5, 1e-2] m^3/mol,\n  ou seja, v = {v_root:.3e} m^3/mol e a "
+        f"unica solucao fisica relevante."
+    )
+
+    # C.3) discussao fisica
+    print(
+        "\nC.3) A pressao de saturacao do CO2 a 300K e da ordem de ~6,7 MPa;\n"
+        "  como P=5 MPa esta ABAIXO da saturacao, o CO2 esta em fase VAPOR\n"
+        "  pura (regiao de uma so fase), o que explica a raiz UNICA "
+        "encontrada.\n"
+        "  De forma geral, para T<Tc=304,2K e P ACIMA da pressao de "
+        "saturacao,\n"
+        "  a cubica de van der Waals PODE ter ate 3 raizes reais positivas\n"
+        "  (regiao de coexistencia liquido-vapor da isoterma):\n"
+        "    - a MENOR raiz = volume molar do LIQUIDO saturado;\n"
+        "    - a MAIOR raiz = volume molar do VAPOR saturado;\n"
+        "    - a raiz INTERMEDIARIA nao tem significado fisico (regiao com\n"
+        "      dP/dv>0, mecanicamente instavel - artefato da curva suave de\n"
+        "      van der Waals, que na isoterma real tem um patamar horizontal\n"
+        "      em vez dessa 'corcova').\n"
+        "  Partindo de um chute proximo do gas ideal (fase vapor), Newton\n"
+        "  sempre converge para a raiz MAIOR (fase vapor) quando ela existe."
+    )
+
+    # C.4) isoterma T=300K, P de 1 a 10 MPa
+    print("\nC.4) Isoterma P x v em T=300K (van der Waals x gas ideal):")
+    Ps = np.arange(1.0, 10.01, 0.5) * 1e6
+    v_vdw_list, v_id_list = [], []
+    for Pi in Ps:
+        fi = lambda v, Pi=Pi: Pi * v**3 - (Pi * b_vdw + Rg * T) * v**2 + a_vdw * v - a_vdw * b_vdw
+        dfi = lambda v, Pi=Pi: 3 * Pi * v**2 - 2 * (Pi * b_vdw + Rg * T) * v + a_vdw
+        v0_i = Rg * T / Pi  # chute = valor ideal NESTE P (evita chute ruim herdado)
+        vi, _ = newton(fi, dfi, v0_i, eps=1e-6 * v0_i)
+        v_vdw_list.append(vi)
+        v_id_list.append(v0_i)
+
+    plt.figure(figsize=(6, 4))
+    plt.plot(np.array(v_vdw_list) * 1e6, Ps / 1e6, marker="o", label="van der Waals")
+    plt.plot(np.array(v_id_list) * 1e6, Ps / 1e6, marker="x", label="gas ideal")
+    plt.xlabel("v (cm^3/mol, =1e-6 m^3/mol)")
+    plt.ylabel("P (MPa)")
+    plt.title("Problema C - Isoterma T=300K")
+    plt.legend()
+    plt.grid(True, alpha=0.3)
+    plt.tight_layout()
+    plt.savefig("problema_C_isoterma.png", dpi=120)
+    plt.close()
+    print("  [grafico salvo em problema_C_isoterma.png]")
+    print(
+        "  O gas ideal superestima v em relacao ao van der Waals nessa\n"
+        "  faixa de P (atracao molecular do termo a/v^2 'puxa' as\n"
+        "  moleculas para mais perto, reduzindo o volume real ocupado)."
     )
 
 
@@ -138,3 +329,5 @@ def problema_A():
 
 if __name__ == "__main__":
     problema_A()
+    print("\n" + "=" * 70)
+    problema_C()
