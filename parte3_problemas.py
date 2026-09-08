@@ -1,8 +1,8 @@
 """
 parte3_problemas.py
 
-Resolucao dos Problemas A (Reservatorio esferico) e C (van der Waals) da
-Parte 3 do TC1.
+Resolucao dos Problemas A (Reservatorio esferico), C (van der Waals) e D
+(Taxa Interna de Retorno) da Parte 3 do TC1.
 
 Cada problema segue, na ordem, os 5 passos obrigatorios do enunciado:
   PASSO 1 - Deducao de f(x) (a funcao cuja raiz resolve o problema)
@@ -13,7 +13,8 @@ Cada problema segue, na ordem, os 5 passos obrigatorios do enunciado:
   PASSO 5 - Verificacao: substituicao da raiz de volta no problema original
 
 Apos os 5 passos, cada problema traz uma secao de "analise complementar"
-com os itens especificos pedidos no enunciado (ex.: A.2/A.3, C.2/C.3/C.4).
+com os itens especificos pedidos no enunciado (ex.: A.2/A.3, C.2/C.3/C.4,
+D.3/D.4).
 """
 
 import math
@@ -326,8 +327,163 @@ def problema_C():
 
 
 # =======================================================================
+# Problema D - Taxa Interna de Retorno (TIR)
+# =======================================================================
+
+def problema_D():
+    print("\n\n### Problema D - Taxa Interna de Retorno ###")
+
+    fluxo1 = [-1000, 300, 350, 400, 450]  # mil R$, anos 0 a 4
+
+    def vpl(i, fluxos):
+        return sum(c / (1 + i) ** k for k, c in enumerate(fluxos))
+
+    def dvpl(i, fluxos):
+        return sum(-k * c / (1 + i) ** (k + 1) for k, c in enumerate(fluxos))
+
+    # --------------------------------------------------------------
+    cabecalho_passo(1, "Deducao de f(i)")
+    # --------------------------------------------------------------
+    print(
+        "  A TIR e, por definicao, a taxa i que zera o VPL. A raiz\n"
+        "  procurada e a de\n"
+        "      f(i) = VPL(i) = soma_{k=0}^{4} C_k/(1+i)^k = 0\n"
+        "  Para uso em Newton, tambem precisamos de\n"
+        "      f'(i) = soma_{k=0}^{4} [-k*C_k/(1+i)^(k+1)]"
+    )
+    f1 = lambda i: vpl(i, fluxo1)
+    df1 = lambda i: dvpl(i, fluxo1)
+
+    # --------------------------------------------------------------
+    cabecalho_passo(2, "Fase I - isolamento da raiz")
+    # --------------------------------------------------------------
+    print("  Tabelamento de VPL(i) em [0, 0.5] (51 pontos):")
+    ivs = tabelar_sinais(f1, 0.0, 0.5, 51)
+    print(f"  Intervalo com mudanca de sinal: {ivs}")
+    a, b = ivs[0]
+    print(
+        f"  -> raiz isolada em [{a:.2f}, {b:.2f}]. VPL(i) e monotonicamente\n"
+        f"  decrescente em [0, 0.5] (fluxo de caixa CONVENCIONAL - uma unica\n"
+        f"  troca de sinal em C_k), cruzando o eixo uma unica vez."
+    )
+
+    # --------------------------------------------------------------
+    cabecalho_passo(3, "Justificativa do metodo e do chute inicial")
+    # --------------------------------------------------------------
+    print(
+        "  Metodo escolhido: NEWTON. Justificativa: f'(i) e uma soma simples\n"
+        "  de potencias de (1+i), barata de calcular analiticamente, e a\n"
+        "  curva VPL(i) e suave e sem inflexoes bruscas na regiao isolada -\n"
+        "  condicoes ideais para a convergencia quadratica de Newton.\n"
+        "  Chute inicial: i0 = 0.10 (10%), taxa de referencia de mercado\n"
+        "  tipicamente usada como primeira estimativa e ja razoavelmente\n"
+        "  proxima da regiao isolada no Passo 2."
+    )
+
+    # --------------------------------------------------------------
+    cabecalho_passo(4, "Resultado")
+    # --------------------------------------------------------------
+    tir1, hist1 = newton(f1, df1, 0.10, eps=1e-6)
+    print(f"  TIR = {tir1*100:.4f} %  (6 algarismos significativos, "
+          f"coerente com a tolerancia 1e-6 exigida)")
+    print(f"  ({hist1[-1]['k']+1} iteracoes)")
+
+    # --------------------------------------------------------------
+    cabecalho_passo(5, "Verificacao")
+    # --------------------------------------------------------------
+    print(f"  VPL({tir1*100:.4f}%) = {f1(tir1):.3e} mil R$ (~0). "
+          f"Raiz verificada.")
+
+    # ================================================================
+    # Analise complementar (itens especificos do enunciado D.2, D.3, D.4)
+    # ================================================================
+    print("\n=== Analise complementar ===")
+
+    # D.2) grafico
+    print("\nD.2) Grafico de VPL(i) em [0, 0.5] com a raiz destacada:")
+    is_ = np.linspace(0, 0.5, 200)
+    plt.figure(figsize=(6, 4))
+    plt.plot(is_ * 100, [f1(i) for i in is_])
+    plt.axhline(0, color="k", lw=0.8)
+    plt.axvline(tir1 * 100, color="r", ls="--", label=f"TIR={tir1*100:.2f}%")
+    plt.xlabel("i (%)")
+    plt.ylabel("VPL (mil R$)")
+    plt.title("Problema D - VPL(i), projeto 1")
+    plt.legend()
+    plt.grid(True, alpha=0.3)
+    plt.tight_layout()
+    plt.savefig("problema_D_vpl_projeto1.png", dpi=120)
+    plt.close()
+    print("  [grafico salvo em problema_D_vpl_projeto1.png]")
+
+    # D.3) decisao com custo de capital
+    print("\nD.3) Decisao de aceitar ou rejeitar o projeto:")
+    for custo in [0.15, 0.20]:
+        vpl_custo = f1(custo)
+        decisao = "ACEITAR" if vpl_custo > 0 else "REJEITAR"
+        comparacao = ">" if tir1 > custo else "<"
+        print(f"  custo de capital = {custo*100:.0f}%: "
+              f"VPL = {vpl_custo:.4f} mil R$  -> {decisao} "
+              f"(TIR={tir1*100:.2f}% {comparacao} custo de capital)")
+
+    # D.4) segundo projeto - multiplas TIRs
+    print("\nD.4) Projeto 2 (fluxo nao-convencional), fluxos:")
+    fluxo2 = [-1000, 2500, -1540]
+    f2 = lambda i: vpl(i, fluxo2)
+    print(f"  {fluxo2}")
+
+    ivs2 = tabelar_sinais(f2, -0.3, 1.0, 400)
+    print(f"  Intervalos com mudanca de sinal: {ivs2}")
+    tirs2 = []
+    for (ai, bi) in ivs2:
+        r, h = bisseccao(f2, ai, bi, eps=1e-8)
+        tirs2.append(r)
+    print(f"  As DUAS TIRs do projeto 2: "
+          f"{[f'{t*100:.4f}%' for t in tirs2]}")
+    for t in tirs2:
+        print(f"    Verificacao: VPL({t*100:.4f}%) = {f2(t):.3e} (~0)")
+
+    is2 = np.linspace(-0.3, 1.0, 400)
+    plt.figure(figsize=(6, 4))
+    plt.plot(is2 * 100, [f2(i) for i in is2])
+    plt.axhline(0, color="k", lw=0.8)
+    plt.axvline(tirs2[0] * 100, color="r", ls="--",
+                label=f"TIR1={tirs2[0]*100:.1f}%")
+    plt.axvline(tirs2[1] * 100, color="darkred", ls="--",
+                label=f"TIR2={tirs2[1]*100:.1f}%")
+    plt.xlabel("i (%)")
+    plt.ylabel("VPL (mil R$)")
+    plt.title("Problema D - VPL(i), projeto 2 (duas raizes)")
+    plt.legend()
+    plt.grid(True, alpha=0.3)
+    plt.tight_layout()
+    plt.savefig("problema_D_vpl_projeto2.png", dpi=120)
+    plt.close()
+    print("  [grafico salvo em problema_D_vpl_projeto2.png]")
+
+    print(
+        "\n  Pergunta critica: se o analista rodar Newton com um UNICO\n"
+        "  chute inicial (ex.: i0=0.5), ele encontra APENAS uma das duas\n"
+        "  TIRs (10% ou 40%, dependendo do chute) e pode concluir\n"
+        "  erroneamente que o projeto tem uma unica taxa de retorno bem\n"
+        "  definida. Isso e perigoso porque a REGRA DA TIR ('aceite se\n"
+        "  TIR > custo de capital') so faz sentido quando ha uma unica\n"
+        "  raiz: com fluxo de caixa nao-convencional (mais de uma troca de\n"
+        "  sinal, como aqui: -,+,-), pode haver VARIAS taxas que zeram o\n"
+        "  VPL, e a decisao de aceitar/rejeitar passa a depender de QUAL\n"
+        "  TIR foi encontrada - um analista que pula a Fase I (tabelamento/\n"
+        "  grafico) pode reportar 'TIR=40%, superior ao custo de capital de\n"
+        "  15%, ACEITAR' sem perceber que a 10% o projeto TAMBEM zera e que\n"
+        "  o VPL pode ser negativo para custos de capital entre as duas\n"
+        "  raizes - levando a uma decisao de investimento errada."
+    )
+
+
+# =======================================================================
 
 if __name__ == "__main__":
     problema_A()
     print("\n" + "=" * 70)
     problema_C()
+    print("\n" + "=" * 70)
+    problema_D()
