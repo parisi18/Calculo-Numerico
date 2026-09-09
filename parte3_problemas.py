@@ -569,6 +569,170 @@ def problema_D():
 
 
 # =======================================================================
+# Problema F (BONUS) - Deflexao de viga
+# =======================================================================
+
+def problema_F():
+    print("\n\n### Problema F (BONUS) - Deflexao de viga ###")
+
+    L = 600.0        # cm (comprimento da viga)
+    E_mod = 50000.0  # kN/cm^2 (modulo de elasticidade)
+    I = 30000.0      # cm^4 (momento de inercia)
+    w0 = 2.5         # kN/cm (intensidade da carga distribuida)
+
+    C = w0 / (120 * L * E_mod * I)  # constante multiplicativa de y(x)
+    y = lambda x: C * (-x**5 + 2 * L**2 * x**3 - L**4 * x)
+    dy = lambda x: C * (-5 * x**4 + 6 * L**2 * x**2 - L**4)
+    d2y = lambda x: C * (-20 * x**3 + 12 * L**2 * x)  # derivada de dy, p/ Newton
+
+    # --------------------------------------------------------------
+    cabecalho_passo(1, "Deducao de f(x)")
+    # --------------------------------------------------------------
+    print(
+        "  O ponto de deflexao maxima e onde dy/dx = 0. Derivando y(x)\n"
+        "  analiticamente, a raiz procurada e a de\n"
+        "      f(x) = dy/dx = C*(-5x^4 + 6L^2 x^2 - L^4) = 0\n"
+        "  com C = w0/(120*L*E*I). Dividindo por C e fazendo u = x^2\n"
+        "  (equacao biquadrada), obtemos por Bhaskara:\n"
+        "      5x^4 - 6L^2 x^2 + L^4 = 0\n"
+        "      u = [6L^2 +- sqrt(36L^4 - 20L^4)] / 10 = [6L^2 +- 4L^2] / 10\n"
+        "  ou seja, u = L^2 (=> x = L, RAIZ ESPURIA de borda - ver item F.3)\n"
+        "  ou u = 0,2 L^2 (=> x = L*sqrt(1/5), candidato interior valido)."
+    )
+    x_analitico = L * math.sqrt(0.2)
+    print(f"  Solucao analitica interior: x = L*sqrt(1/5) = "
+          f"{x_analitico:.4f} cm")
+
+    # --------------------------------------------------------------
+    cabecalho_passo(2, "Fase I - isolamento da raiz")
+    # --------------------------------------------------------------
+    print("  Tabelamento de sinais de dy/dx no intervalo ABERTO (0, L) "
+          "(60 pontos):")
+    ivs = tabelar_sinais(dy, 1e-6, L - 1e-6, 60)
+    print(f"  Intervalos com mudanca de sinal: {ivs}")
+    a, b = ivs[0]
+    print(f"  -> raiz interior isolada em [{a:.3f}, {b:.3f}] cm "
+          f"(note que L={L:.0f} cm foi excluido de proposito do "
+          f"tabelamento - ver F.3)")
+
+    # --------------------------------------------------------------
+    cabecalho_passo(3, "Justificativa do metodo e do chute inicial")
+    # --------------------------------------------------------------
+    print(
+        "  Metodo escolhido: NEWTON. Justificativa: dy/dx e um polinomio\n"
+        "  de grau 4, cuja derivada d2y/dx2 = C*(-20x^3 + 12L^2 x) e\n"
+        "  simples e barata de obter analiticamente, permitindo\n"
+        "  convergencia quadratica.\n"
+        f"  Chute inicial: x0 = L/2 = {L/2:.1f} cm (meio do vao) - robusto\n"
+        f"  porque esta bem no interior do intervalo isolado no Passo 2 e\n"
+        f"  longe da raiz espuria de borda x=L."
+    )
+
+    # --------------------------------------------------------------
+    cabecalho_passo(4, "Resultado")
+    # --------------------------------------------------------------
+    x_max, histF1 = newton(dy, d2y, L / 2, eps=1e-6)
+    print(f"  x_max = {x_max:.2f} cm  (6 algarismos significativos, "
+          f"coerente com os dados de entrada dados com 2-5 algarismos)")
+    print(f"  ({histF1[-1]['k']+1} iteracoes)")
+
+    # --------------------------------------------------------------
+    cabecalho_passo(5, "Verificacao")
+    # --------------------------------------------------------------
+    print(f"  dy/dx({x_max:.2f}) = {dy(x_max):.3e} (~0). Raiz verificada.")
+    print(f"  (compare com a solucao analitica do Passo 1: "
+          f"x = {x_analitico:.2f} cm - praticamente identico)")
+
+    # ================================================================
+    # Analise complementar (itens especificos do enunciado F.2, F.3, F.4)
+    # ================================================================
+    print("\n=== Analise complementar ===")
+
+    # F.2) deflexao maxima
+    y_max = y(x_max)
+    print(f"\nF.2) Deflexao maxima: y({x_max:.2f}) = {y_max:.4f} cm "
+          f"(sinal negativo = deflexao para BAIXO, convencao usual de "
+          f"vigas)")
+
+    # F.3) armadilha em x=0 e x=L
+    print("\nF.3) Armadilha proposital:")
+    print(f"  dy/dx(0) = {dy(0.0):.6e}")
+    print(f"  dy/dx(L) = {dy(L):.6e}")
+    print(
+        "  dy/dx(0) e claramente diferente de zero (extremidade nao e\n"
+        "  ponto critico), mas dy/dx(L) e ALGEBRICAMENTE zero tambem (a\n"
+        "  extremidade x=L E uma raiz matematica da derivada, como achado\n"
+        "  no Passo 1: u=L^2 => x=L)! Um aluno que aplica bisseccao\n"
+        "  ingenuamente em [0, L] esbarra exatamente nessa armadilha: com\n"
+        "  f(a)=dy/dx(0)<0 e f(b)=dy/dx(L)=0, o teste ROBUSTO por sinal do\n"
+        "  metodos.py ((fa>0)==(fb>0), pois 0.0>0 e False, igual ao sinal\n"
+        "  de f(a)) detecta corretamente que NAO ha troca de sinal genuina\n"
+        "  e recusa o intervalo - ou seja, a implementacao 'salva' o aluno\n"
+        "  de uma convergencia para um ponto sem sentido fisico. Testando:"
+    )
+    try:
+        x_bis_errado, hist_bis_err = bisseccao(dy, 0.0, L, eps=1e-6)
+        print(f"    bisseccao(dy, 0, L) convergiu para x = "
+              f"{x_bis_errado:.4f} cm -> raiz SEM sentido fisico "
+              f"(extremidade)")
+    except ValueError as e:
+        print(f"    bisseccao(dy, 0, L) levantou ValueError: {e}")
+    print(
+        "  (Se a implementacao usasse o teste classico fa*fb<0, o produto\n"
+        "  daria -0.003*0.0=0.0, que tambem falha o teste '<0' - mas em\n"
+        "  ponto flutuante f(L) raramente e EXATAMENTE zero, podendo dar um\n"
+        "  residuo minusculo de sinal aleatorio; se esse residuo desse\n"
+        "  positivo, o teste passaria e a bisseccao convergiria SILENCIO-\n"
+        "  SAMENTE para x~L, um resultado sem sentido fisico.)\n"
+        "  Correcao: restringir o intervalo para EXCLUIR a extremidade\n"
+        "  espuria, por exemplo [0, 0.9L] ou, melhor, usar o intervalo ja\n"
+        "  isolado pelo tabelamento no Passo 2 (que exclui x=L),\n"
+        "  garantindo que a bisseccao va atras apenas da raiz interior."
+    )
+
+    # F.4) derivada numerica (diferencas centradas) e erro vs h
+    print("\nF.4) Derivada numerica central: f'(x) ~ (f(x+h)-f(x-h))/(2h)")
+    hs = [1e-2, 1e-4, 1e-6, 1e-8, 1e-10]
+    erros = []
+    for h in hs:
+        dy_num = lambda x, h=h: (y(x + h) - y(x - h)) / (2 * h)
+        d2y_num = lambda x, h=h: (dy_num(x + h) - dy_num(x - h)) / (2 * h)
+        try:
+            x_num, hist_num = newton(dy_num, d2y_num, L / 2, eps=1e-6, max_iter=100)
+            erro = abs(x_num - x_analitico)
+        except (ValueError, ZeroDivisionError):
+            x_num, erro = float("nan"), float("nan")
+        erros.append(erro)
+        print(f"  h={h:.0e}:  x_max_numerico={x_num:.6f} cm  "
+              f"erro={erro:.3e} cm")
+
+    plt.figure(figsize=(6, 4))
+    plt.loglog(hs, erros, marker="o")
+    plt.xlabel("h")
+    plt.ylabel("erro em x_max (cm)")
+    plt.title("Problema F - Erro da derivada numerica vs h")
+    plt.grid(True, which="both", alpha=0.3)
+    plt.tight_layout()
+    plt.savefig("problema_F_erro_vs_h.png", dpi=120)
+    plt.close()
+    print("  [grafico salvo em problema_F_erro_vs_h.png]")
+    print(
+        "\n  Por que o erro NAO cai indefinidamente quando h->0: ha DOIS\n"
+        "  erros competindo. O erro de TRUNCAMENTO da formula de diferenca\n"
+        "  centrada e O(h^2) e diminui com h menor - mas o erro de\n"
+        "  ARREDONDAMENTO de ponto flutuante, causado por subtrair dois\n"
+        "  numeros f(x+h) e f(x-h) MUITO proximos (cancelamento\n"
+        "  catastrofico) e depois dividir por 2h (h tambem minusculo),\n"
+        "  CRESCE conforme h->0. Existe um h* otimo (tipicamente perto de\n"
+        "  1e-5 a 1e-6 para diferenca centrada em double precision) onde a\n"
+        "  soma dos dois erros e minima; para h menor que isso, o erro\n"
+        "  volta a AUMENTAR (ou o metodo ate falha, como visto acima para\n"
+        "  h<=1e-6). Este e o fenomeno classico de compromisso\n"
+        "  truncamento-vs-arredondamento em diferenciacao numerica."
+    )
+
+
+# =======================================================================
 
 if __name__ == "__main__":
     problema_A()
@@ -578,3 +742,5 @@ if __name__ == "__main__":
     problema_C()
     print("\n" + "=" * 70)
     problema_D()
+    print("\n" + "=" * 70)
+    problema_F()
