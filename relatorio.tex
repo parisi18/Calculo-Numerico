@@ -619,13 +619,6 @@ onde $x = \frac{1}{\sqrt{f}}$.
 
 \par Assim, o problema passa a ser primeiramente achar x que zera aquela função. E, como a primeira derivada $F'(x)$ seria muito difícil de se achar para essa função, descartamos Newton-Raphson e a Secante possui ordem de convergência superior à da bissecção, utilizamos o método da Secante.
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{images/3B1.png}
-    \caption{Saída Problema 3 B.1}
-    \label{fig:3B1.png}
-\end{figure}
-
 \textbf{B.2} Este é o problema em que a \textbf{secante brilha}. Explique por quê: escreva (ou tente escrever) $f'$ analiticamente e comente a dificuldade. Resolva pelos três métodos e compare o esforço.
 
 \par Como dito anteriormente ele possui uma boa ordem de convergência (superior a da bissecção) e 
@@ -634,6 +627,26 @@ onde $x = \frac{1}{\sqrt{f}}$.
 \[
 f_0 = \frac{0,25}{\left[ \log_{10}\left( \frac{\epsilon}{3,7 D} + \frac{5,74}{Re^{0,9}} \right) \right]^2}
 \]
+
+Calcule $f_0$ e use-o como chute em Newton/secante. Quantas iterações você economizou em relação a um chute arbitrário como $f_0 = 0,05$?
+
+\textbf{B.4} Com o $f$ obtido, calcule a perda de carga pela equação de Darcy-Weisbach:
+\[
+h_f = f \frac{L}{D} \frac{V^2}{2g}, \quad V = \frac{Q}{A}, \quad g = 9,81\text{ m/s}^2
+\]
+
+\textbf{B.5} \textit{(análise de sensibilidade)} Refaça o cálculo de $h_f$ usando $f$ com apenas \textbf{2 casas decimais} ($f \approx 0,02$). Qual o erro percentual em $h_f$? Isso justifica o esforço numérico?
+
+\par A saída do código referente aos itens em B pode ser vista abaixo.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{images/3B.png}
+    \caption{Saída Problema 3 B}
+    \label{fig:3B.png}
+\end{figure}
+
+
 \section*{Problema C \textnormal{---} Equação de van der Waals}
 
 O gás ideal falha em altas pressões. A equação de van der Waals corrige isso:
@@ -856,6 +869,110 @@ Tabele o número de iterações de cada caso. \textbf{O que acontece com o esfor
 \textbf{E.3} Um chute inicial melhor para órbitas muito excêntricas é $E_0 = M + e \sin M$. Refaça o caso (iii) com ele e compare.
 
 \textbf{E.4} \textit{(comparação)} Para o caso (iii), rode também a bissecção em $[0; \pi]$. Ela converge? Em quantas iterações? Qual método você recomendaria para um software de rastreamento de satélites que precisa resolver essa equação \textbf{milhões de vezes por segundo}, e por quê?
+
+\section*{Problema F \textnormal{---} Deflexão de viga (BÔNUS, +8 pontos)}
+
+Uma viga de comprimento $L = 600\text{ cm}$, simplesmente apoiada e com carga distribuída crescente, tem deflexão
+\[
+y(x) = \frac{w_0}{120\,L\,E\,I}\left(-x^5 + 2L^2x^3 - L^4x\right)
+\]
+com $E = 50\,000\text{ kN}/\text{cm}^2$, $I = 30\,000\text{ cm}^4$ e $w_0 = 2{,}5\text{ kN}/\text{cm}$.
+
+\textbf{F.1} O ponto de deflexão máxima é onde $\dfrac{dy}{dx} = 0$. Derive analiticamente e encontre esse ponto.
+
+\textbf{F.2} Calcule a deflexão máxima em cm.
+
+\textbf{F.3} --- \textit{Armadilha proposital.} Avalie $\dfrac{dy}{dx}$ em $x=0$ e em $x=L$. O que você observa em $x=L$? Um aluno decide aplicar a bissecção no intervalo $[0,L]$. O que acontece? Sua implementação levanta erro, converge para o valor certo, ou converge para um valor sem sentido físico? Explique e corrija o intervalo.
+
+\textbf{F.4} Refaça F.1 usando uma derivada numérica em vez da analítica:
+\[
+f'(x) \approx \frac{f(x+h) - f(x-h)}{2h}
+\]
+Teste $h = 10^{-2}, 10^{-4}, 10^{-6}, 10^{-8}, 10^{-10}$. Plote o erro em função de $h$.
+
+Pergunta: por que o erro não diminui indefinidamente à medida que $h \to 0$? (Este é um dos fenômenos mais importantes de todo o Cálculo Numérico.)
+
+*{Passo 1 --- Dedução de $f(x)$.}
+O ponto de deflexão máxima é onde $dy/dx=0$. Derivando $y(x)$ analiticamente, a raiz procurada é a de
+\[
+f(x) = \frac{dy}{dx} = C\left(-5x^4 + 6L^2x^2 - L^4\right) = 0, \qquad C = \frac{w_0}{120\,L\,E\,I}.
+\]
+Dividindo por $C$ e fazendo $u=x^2$ (equação biquadrada), obtemos por Bhaskara:
+\[
+5x^4 - 6L^2x^2 + L^4 = 0 \ \Longrightarrow\ u = \frac{6L^2 \pm \sqrt{36L^4-20L^4}}{10} = \frac{6L^2\pm4L^2}{10}.
+\]
+Ou seja, $u=L^2 \Rightarrow x=L$ (\textbf{raiz espúria de borda} --- ver item F.3) ou $u=0{,}2L^2 \Rightarrow x = L\sqrt{1/5}$ (candidato interior válido). Analiticamente,
+\[
+x = L\sqrt{1/5} = 268{,}3282\text{ cm}.
+\]
+
+{Passo 2 --- Fase I: isolamento da raiz.}
+Tabelamos $f(x)=dy/dx$ no intervalo \textbf{aberto} $(0,L)$ (excluindo as extremidades de propósito, por causa da armadilha discutida em F.3), com 60 pontos. O tabelamento encontrou uma única mudança de sinal, isolando a raiz interior em
+\[
+x \in [264{,}41,\ 274{,}58]\text{ cm}.
+\]
+
+{Passo 3 --- Justificativa do método e do chute inicial.}
+Método escolhido: \textbf{Newton-Raphson}. Justificativa: $dy/dx$ é um polinômio de grau 4, cuja derivada
+\[
+\frac{d^2y}{dx^2} = C\left(-20x^3+12L^2x\right)
+\]
+é simples e barata de obter analiticamente, permitindo convergência quadrática. Chute inicial: $x_0=L/2=300{,}0$ cm (meio do vão) --- robusto porque está bem no interior do intervalo isolado no Passo 2 e longe da raiz espúria de borda $x=L$.
+
+{Passo 4 --- Resultado.}
+Com critério de parada $|f(x_{k+1})|<\varepsilon$ ou $|x_{k+1}-x_k|<\varepsilon$, $\varepsilon=10^{-6}$, o método convergiu em apenas $2$ iterações para
+\[
+x_{\text{max}} = 268{,}33\text{ cm} \quad (6\text{ algarismos significativos}),
+\]
+em excelente concordância com a solução analítica do Passo 1 ($268{,}3282$ cm).
+
+{Passo 5 --- Verificação.}
+Substituindo de volta:
+\[
+\frac{dy}{dx}(268{,}33) \approx 2{,}6\times10^{-11} \approx 0,
+\]
+confirmando que $x_{\text{max}}$ é de fato um ponto crítico de $y(x)$.
+
+{F.2 --- Deflexão máxima.}
+\[
+y(268{,}33) = -0{,}5152\text{ cm}.
+\]
+O sinal negativo corresponde à deflexão para \textbf{baixo}, convenção usual em vigas sob carga distribuída.
+
+{F.3 --- Armadilha proposital.}
+Avaliando a derivada nas extremidades:
+\[
+\frac{dy}{dx}(0) = -3{,}000\times10^{-3} \qquad \frac{dy}{dx}(L) = 0{,}000\times10^{0}.
+\]
+$dy/dx(0)$ é claramente diferente de zero (extremidade não é ponto crítico), mas $dy/dx(L)$ é \textbf{algebricamente zero também} --- a extremidade $x=L$ é uma raiz matemática da derivada, como já encontrado no Passo 1 ($u=L^2\Rightarrow x=L$). Um aluno que aplica bissecção ingenuamente em $[0,L]$ esbarra exatamente nessa armadilha: com $f(a)=dy/dx(0)<0$ e $f(b)=dy/dx(L)=0$, o teste \textbf{robusto por sinal} do \texttt{metodos.py} (\texttt{(fa>0)==(fb>0)}, pois \texttt{0.0>0} é \texttt{False}, igual ao sinal de $f(a)$) detecta corretamente que \textbf{não} há troca de sinal genuína e \textbf{recusa o intervalo} --- ou seja, a implementação ``salva'' o aluno de uma convergência para um ponto sem sentido físico:
+\begin{quote}
+\texttt{bisseccao(dy, 0, L)} levanta \texttt{ValueError}: ``O intervalo passado não contempla um zero para a função f: $f(a)=-0{,}003$, $f(b)=0{,}0$ têm o mesmo sinal.''
+\end{quote}
+Se a implementação usasse o teste clássico $f(a)\cdot f(b)<0$, o produto daria $-0{,}003\times0{,}0=0{,}0$, que também falharia o teste ``$<0$'' --- mas em ponto flutuante $f(L)$ raramente é \textbf{exatamente} zero, podendo dar um resíduo minúsculo de sinal aleatório; se esse resíduo desse positivo, o teste passaria e a bissecção convergiria \textbf{silenciosamente} para $x\sim L$, um resultado sem sentido físico. \textbf{Correção:} restringir o intervalo para excluir a extremidade espúria, por exemplo $[0,\,0{,}9L]$, ou, melhor, usar o intervalo já isolado pelo tabelamento do Passo 2 (que exclui $x=L$), garantindo que a bissecção vá atrás apenas da raiz interior.
+
+{F.4 --- Derivada numérica e o compromisso truncamento-vs-arredondamento.}
+Usando $f'(x) \approx \dfrac{f(x+h)-f(x-h)}{2h}$ no lugar da derivada analítica em Newton, para diferentes $h$:
+
+\begin{center}
+\begin{tabular}{lccc}
+\hline
+$h$ & $x_{\text{max}}$ numérico (cm) & erro (cm) & status \\ \hline
+$10^{-2}$ & $268{,}328159$ & $1{,}44\times10^{-6}$ & converge \\
+$10^{-4}$ & $268{,}328012$ & $1{,}45\times10^{-4}$ & converge \\
+$10^{-6}$ & --- & --- & \textbf{falha} (derivada numérica $\approx 0$) \\
+$10^{-8}$ & --- & --- & \textbf{falha} \\
+$10^{-10}$ & --- & --- & \textbf{falha} \\ \hline
+\end{tabular}
+\end{center}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/problema_F_erro_vs_h.png}
+    \caption{Erro de $x_{\text{max}}$ obtido via derivada numérica central, em função de $h$ (escala log-log). Para $h\le10^{-6}$ o método falha por cancelamento catastrófico.}
+    \label{fig:erro_F}
+\end{figure}
+
+\textbf{Por que o erro não diminui indefinidamente quando $h\to0$:} há dois erros competindo. O erro de \textbf{truncamento} da fórmula de diferença centrada é $O(h^2)$ e diminui com $h$ menor --- mas o erro de \textbf{arredondamento} de ponto flutuante, causado por subtrair dois números $f(x+h)$ e $f(x-h)$ muito próximos (cancelamento catastrófico) e depois dividir por $2h$ (também minúsculo), \textbf{cresce} conforme $h\to0$. Existe um $h^*$ ótimo (tipicamente perto de $10^{-5}$ a $10^{-6}$ para diferença centrada em precisão dupla) onde a soma dos dois erros é mínima; para $h$ menor que isso, o erro volta a aumentar --- e, neste caso, o próprio método de Newton chega a \textbf{falhar} para $h\le10^{-6}$, pois a derivada numérica calculada fica indistinguível de zero. Este é o fenômeno clássico de compromisso truncamento-\textit{vs}-arredondamento em diferenciação numérica.
 
 \chapter{Relatório e discussão}
 
