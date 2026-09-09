@@ -24,7 +24,7 @@ import matplotlib
 matplotlib.use("Agg")  # backend sem tela, so para salvar as figuras
 import matplotlib.pyplot as plt
 
-from metodos import bisseccao, newton
+from metodos import bisseccao, newton, secante
 
 
 # =======================================================================
@@ -737,7 +737,7 @@ def problema_F():
 if __name__ == "__main__":
     problema_A()
     print("\n" + "=" * 70)
-    problema_B
+    problema_B()
     print("\n" + "=" * 70)
     problema_C()
     print("\n" + "=" * 70)
