@@ -1,0 +1,873 @@
+%% abtex2-modelo-relatorio-tecnico.tex, v-1.9.6 laurocesar
+%% Copyright 2012-2016 by abnTeX2 group at http://www.abntex.net.br/ 
+%%
+%% This work may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License, either version 1.3
+%% of this license or (at your option) any later version.
+%% The latest version of this license is in
+%%   http://www.latex-project.org/lppl.txt
+%% and version 1.3 or later is part of all distributions of LaTeX
+%% version 2005/12/01 or later.
+%%
+%% This work has the LPPL maintenance status `maintained'.
+%% 
+%% The Current Maintainer of this work is the abnTeX2 team, led
+%% by Lauro César Araujo. Further information are available on 
+%% http://www.abntex.net.br/
+%%
+%% This work consists of the files abntex2-modelo-relatorio-tecnico.tex,
+%% abntex2-modelo-include-comandos and abntex2-modelo-references.bib
+%%
+
+% ------------------------------------------------------------------------
+% ------------------------------------------------------------------------
+% abnTeX2: Modelo de Relatório Técnico/Acadêmico em conformidade com 
+% ABNT NBR 10719:2015 Informação e documentação - Relatório técnico e/ou
+% científico - Apresentação
+% ------------------------------------------------------------------------ 
+% ------------------------------------------------------------------------
+
+\documentclass[
+	% -- opções da classe memoir --
+	12pt,				% tamanho da fonte
+	openright,			% capítulos começam em pág ímpar (insere página vazia caso preciso)
+	%twoside,			% para impressão em recto e verso. Oposto a oneside
+	a4paper,			% tamanho do papel. 
+	% -- opções da classe abntex2 --
+	%chapter=TITLE,		% títulos de capítulos convertidos em letras maiúsculas
+	%section=TITLE,		% títulos de seções convertidos em letras maiúsculas
+	%subsection=TITLE,	% títulos de subseções convertidos em letras maiúsculas
+	%subsubsection=TITLE,% títulos de subsubseções convertidos em letras maiúsculas
+	% -- opções do pacote babel --
+	english,			% idioma adicional para hifenização
+	french,				% idioma adicional para hifenização
+	spanish,			% idioma adicional para hifenização
+	brazil,				% o último idioma é o principal do documento
+	]{abntex2}
+
+
+
+% PACOTES
+
+% ---
+% Pacotes fundamentais 
+\usepackage{lmodern}			% Usa a fonte Latin Modern
+\usepackage[T1]{fontenc}		% Selecao de codigos de fonte.
+\usepackage[utf8]{inputenc}		% Codificacao do documento (conversão automática dos acentos)
+\usepackage{indentfirst}		% Indenta o primeiro parágrafo de cada seção.
+\usepackage{color}				% Controle das cores
+\usepackage{graphicx}			% Inclusão de gráficos
+\usepackage{microtype} 			% para melhorias de justificação
+% ---
+\usepackage{tabularx}
+% Pacotes adicionais, usados no anexo do modelo de folha de identificação
+\usepackage{multicol}
+\usepackage{multirow}
+\usepackage{vcell}
+\usepackage{float} % para utilizar o H de tabelas e figuras e mante-las no lugar
+% ---
+
+%----------------- PARA INSERIR ARQUIVOS DE CODIGOS -----------------%
+\usepackage{xcolor}
+% Definindo novas cores
+\definecolor{verde}{rgb}{0,0.5,0}
+% Configurando layout para mostrar codigos C++
+\usepackage{listings}
+\lstset{
+  language=Verilog, %indicar a linguagem utilizada
+  basicstyle=\ttfamily\tiny, 
+  keywordstyle=\color{blue}, 
+  stringstyle=\color{verde}, 
+  commentstyle=\color{gray}, 
+  extendedchars=true, 
+  showspaces=false, 
+  showstringspaces=false, 
+  numbers=left,
+  numberstyle=\tiny,
+  breaklines=true, 
+  backgroundcolor=\color{green!10},
+  breakautoindent=true, 
+  captionpos=b,
+  xleftmargin=0pt,
+}
+% -----------------% FIM INSERIR ARQUIVOs DE CODIGO -----------------%
+
+% Pacotes de citações
+\usepackage[brazilian,hyperpageref]{backref}	 % Paginas com as citações na bibl
+\usepackage[num]{abntex2cite}	% Citações padrão ABNT
+\usepackage[utf8]{inputenc}
+\usepackage{tcolorbox}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\citebrackets() %citação numérica entre colchetes
+% --- 
+
+
+% CONFIGURAÇÕES DE PACOTES
+
+% Configurações do pacote backref
+% Usado sem a opção hyperpageref de backref
+\renewcommand{\backrefpagesname}{Citado na(s) página(s):~}
+% Texto padrão antes do número das páginas
+\renewcommand{\backref}{}
+% Define os textos da citação
+\renewcommand*{\backrefalt}[4]{
+	\ifcase #1 %
+		Nenhuma citação no texto.%
+	\or
+		Citado na página #2.%
+	\else
+		Citado #1 vezes nas páginas #2.%
+	\fi}%
+% ---
+
+
+% Informações de dados para CAPA e FOLHA DE ROSTO
+\titulo{Trabalho computacional 1 - Cálculo Numérico}
+\autor{
+    Gabriel Augusto Mendonça Beloso RA: 148179 \and
+    João Vitor Mota do Amaral RA: 170572 \and
+    João Marcelo Constantino Nordemann RA: 168789 \and
+    Rafael dos Santos Parisi RA: 148418
+} %NAO PREENCHER
+\local{São José dos Campos - Brasil}
+\data{Setembro de 2026}
+\instituicao{
+  Docente: Prof. Dr. Luiz Leduíno de Salles Neto
+  \par
+  Universidade Federal de São Paulo - UNIFESP
+  \par
+  Instituto de Ciência e Tecnologia - Campus São José dos Campos
+}
+\tipotrabalho{Relatório técnico}
+\preambulo{Relatório apresentado à Universidade Federal de São Paulo como parte dos requisitos para aprovação na disciplina de Calculo Numérico.}
+% ---
+
+% Configurações de aparência do PDF final
+
+% alterando o aspecto da cor azul
+\definecolor{blue}{RGB}{41,5,195}
+
+% informações do PDF
+\makeatletter
+\hypersetup{
+     	%pagebackref=true,
+		pdftitle={\@title}, 
+		pdfauthor={\@author},
+    	pdfsubject={\imprimirpreambulo},
+	    pdfcreator={LaTeX with abnTeX2},
+		pdfkeywords={abnt}{latex}{abntex}{abntex2}{relatório técnico}, 
+		colorlinks=true,       		% false: boxed links; true: colored links
+    	linkcolor=blue,          	% color of internal links
+    	citecolor=blue,        		% color of links to bibliography
+    	filecolor=magenta,      		% color of file links
+		urlcolor=blue,
+		bookmarksdepth=4
+}
+\makeatother
+% --- 
+
+
+% Espaçamentos entre linhas e parágrafos 
+
+% O tamanho do parágrafo é dado por:
+\setlength{\parindent}{1.3cm}
+
+% Controle do espaçamento entre um parágrafo e outro:
+\setlength{\parskip}{0.2cm}  % tente também \onelineskip
+
+% compila o indice
+\makeindex
+% ---
+
+
+
+% ------------------------------------------------
+% Início do documento
+\begin{document}
+
+% Seleciona o idioma do documento (conforme pacotes do babel)
+%\selectlanguage{english}
+\selectlanguage{brazil}
+
+% Retira espaço extra obsoleto entre as frases.
+\frenchspacing 
+
+% ----------------------------------------------------------
+% ELEMENTOS PRÉ-TEXTUAIS
+% ----------------------------------------------------------
+% \pretextual
+
+% ---
+% Capa
+\imprimircapa
+% ---
+
+% ---
+% Folha de rosto
+\imprimirfolhaderosto*
+% ---
+
+%------LISTAS SÃO OPCIONAIS---------
+% inserir lista de ilustrações
+\pdfbookmark[0]{\listfigurename}{lof}
+\listoffigures*
+\clearpage
+
+% inserir lista de tabelas
+\pdfbookmark[0]{\listtablename}{lot}
+\listoftables*
+\clearpage
+% ---
+
+%SUMÁRIO É OBRIGATÓRIO
+% inserir o sumario
+\pdfbookmark[0]{\contentsname}{toc}
+\tableofcontents*
+% ---
+
+
+% ----------------------------------------------------------
+% ELEMENTOS TEXTUAIS
+\textual
+
+% ----------------------------------------------------------
+
+%------------------- MODELO DE FIGURA -----------------------------
+%-Modelo da \autoref{fig:esquematico}:
+%-\begin{figure}[H]
+%-\centering 
+%-\caption{Esquematico} \label{fig:esquematico}
+%-\includegraphics[scale=0.3]{esquematico.png}
+%-\legend{Fonte: Computer Organization and Design \cite{patterson2007} }
+%-\end{figure}
+
+
+%------------------- MODELO DE TABELA -----------------------------
+%Modelo da \autoref{tab:Instr3OP}:
+%\begin{table}[htb]
+%\centering
+%\ABNTEXfontereduzida
+%\caption{Exemplo de um formato de Instruções} \label{tab:Instr3OP}
+%\begin{tabular}{r|p{2cm}|p{1.7cm}|p{1.7cm}|p{1.7cm}|p{3cm}} 
+%\textbf{Tamanho (bits)} & 6 & 5 & 5 & 5 & 11 \\ \hline
+%\textbf{Campo} & OPcode & Reg1 & Reg2 & Reg3 & Blank \\ \hline
+%\textbf{Bits} & 31 - 26 & 25 - 21 & 20 - 16 & 15 - 11 & 10 - 0\\
+%\end{tabular}
+%\legend{Fonte: O Autor}
+%\end{table}
+%\end
+
+%Como utilizar \textbf{Anexos}
+%Material que não seja de autoria própria que traga maiores detalhes de algo utilizado no decorrer do relatório
+
+%Como utilizar \textbf{Apêndices}
+%Material de autoria própria que traga maiores detalhes e que não seja %essencial no decorrer do relatório.
+
+%Modos de comandos $\backslash$ref\\
+%$\backslash$ref: \ref{fig:esquematico}\\
+%$\backslash$nameref: \nameref{fig:esquematico}\\
+%$\backslash$autoref: \autoref{fig:esquematico}\\
+
+%Existe uma forma de inserir arquivos de códigos diretamente no latex, verificar a formatação nas linhas 70 a 93 do código latex e a inserção feita do código \nameref{code:BinToBCD2.v} no \autoref{code:BinToBCD2.v} 
+
+\chapter{Implementação}
+
+\section{Entrega}
+\par Abaixo podemos encontrar o link para o repositório contendo as implementações solicitadas: \url{https://github.com/parisi18/Calculo-Numerico}.
+
+\section{Métodos}
+\par A implementação dos métodos pode ser encontrado no arquivo metodos.py do repositório, que pode ser acessado via o link: \url{https://github.com/parisi18/Calculo-Numerico/blob/main/metodos.py}
+
+\chapter{Exercícios didáticos}
+
+\section{Isolamento}
+
+\par Escreva tabelar\_sinais(f, a, b, n) que avalia f em n pontos igualmente espaçados e retorna
+a lista de intervalos onde há mudança de sinal.
+
+\par (a) Aplique a $f(x) = x^3 - 9x + 3$ em $[-5, 5]$ com $n=21$, $n=11$, $n=6$ e $n=4$. As quatro malhas encontram o mesmo número de raízes?
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\textwidth]{images/2.1a.png}
+    \caption{Saída para exercício 2.1a}
+    \label{fig:2.1a.png}
+\end{figure}
+
+\par (b) Agora aplique a $g(x) = (x - 1,05)(x - 1,15)(x - 3)$ em $[0, 4]$, com $n=9$, $n=17$, $n=41$ e $n=401$. Quantas raízes cada malha encontra? Compare com o número de raízes que você sabe que g tem.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\textwidth]{images/2.1b.png}
+    \caption{Saída para exercício 2.1b}
+    \label{fig:2.1b.png}
+\end{figure}
+
+\par (c) No relatório: qual característica de g faz o tabelamento grosseiro falhar, e por que f não
+sofre do mesmo problema? Que estratégia você adotaria se não soubesse de antemão onde estão
+as raízes?
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\textwidth]{images/2.1c.png}
+    \caption{Saída para exercício 2.1c}
+    \label{fig:2.1c.png}
+\end{figure}
+
+\section{Previsão × realidade na bissecção}
+
+\par Para cada $\varepsilon \in \{10^{-2}, 10^{-4}, 10^{-6}, 10^{-8}, 10^{-10}\}$, no intervalo $[0, 1]$:
+
+\begin{itemize}
+    \item Calcule o número previsto de iterações pela fórmula 
+    \[
+    k > \frac{\log(b_0 - a_0) - \log \varepsilon}{\log 2};
+    \]
+    \item Rode seu código e registre o número efetivo;
+    \item Monte uma tabela comparando os dois.
+\end{itemize}
+
+\par A previsão é exata, otimista ou pessimista? Por quê?
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\textwidth]{images/2.2.png}
+    \caption{Saída para exercício 2.2}
+    \label{fig:2.2.png}
+\end{figure}
+
+\section{Custo real: avaliações de função}
+
+Encontre a raiz em $(0, 1)$ com $\varepsilon = 10^{-8}$ pelos três métodos e preencha:
+
+\begin{center}
+\begin{tabular}{lccc}
+\hline
+\textbf{Método} & \textbf{Iterações} & \textbf{Avaliações de $f$} & \textbf{Avaliações de $f'$} \\ \hline
+Bissecção & \rule{2cm}{0.4pt} & \rule{2cm}{0.4pt} & \rule{2cm}{0.4pt} \\
+Newton    & \rule{2cm}{0.4pt} & \rule{2cm}{0.4pt} & \rule{2cm}{0.4pt} \\
+Secante   & \rule{2cm}{0.4pt} & \rule{2cm}{0.4pt} & \rule{2cm}{0.4pt} \\ \hline
+\end{tabular}
+\end{center}
+
+\par Discuta: \textbf{qual método é o mais barato em avaliações de função?} A resposta é a mesma que ``qual usa menos iterações''?
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\textwidth]{images/2.3.png}
+    \caption{Saída para exercício 2.3}
+    \label{fig:2.3.png}
+\end{figure}
+
+\section{Ordem empírica de convergência}
+
+Sabendo que a raiz exata é $\xi = 0,3376089559658377$, calcule o erro $e_k = |x_k - \xi|$ a cada iteração e estime a ordem de convergência por
+\[
+p_k \approx \frac{\ln(e_{k+1}/e_k)}{\ln(e_k/e_{k-1})}
+\]
+
+\par Faça isso para Newton e para a secante. Compare com os valores teóricos $p = 2$ e $p \approx 1,618$.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\textwidth]{images/2.4.png}
+    \caption{Saída para exercício 2.4}
+    \label{fig:2.4.png}
+\end{figure}
+
+\section{Os modos de falha de Newton}
+
+Investigue computacionalmente cada situação abaixo. Para cada uma, \textbf{mostre a saída do seu código} e explique geometricamente o que aconteceu:
+
+\begin{center}
+\begin{tabular}{lccl}
+\hline
+\textbf{Caso} & \textbf{Função} & \textbf{$x_0$} & \textbf{O que investigar} \\ \hline
+(a) & $f(x) = x^3 - 2x + 2$ & $0$ & Rode 10 iterações. Converge? \\
+(b) & $f(x) = \arctan(x)$ & $2,0$ & E com $x_0 = 1,0$? Encontre o valor-limite de $x_0$ \\
+(c) & $f(x) = x^3 - 9x + 3$ & $\sqrt{3}$ & O que sua implementação faz? \\ \hline
+\end{tabular}
+\end{center}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\textwidth]{images/2.5a.png}
+    \caption{Saída para exercício 2.5a}
+    \label{fig:2.5a.png}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\textwidth]{images/2.5b.png}
+    \caption{Saída para exercício 2.5b}
+    \label{fig:2.5c.png}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\textwidth]{images/2.5c.png}
+    \caption{Saída para exercício 2.5c}
+    \label{fig:2.5c.png}
+\end{figure}
+
+\section{Raiz múltipla} 
+
+Considere $f(x) = (x - 2)^2(x + 1)$, que tem raiz \textbf{dupla} em $x = 2$.
+
+\begin{itemize}
+    \item Rode Newton a partir de $x_0 = 3$ por 10 iterações e tabele o erro. A convergência é quadrática?
+    \item Calcule a razão $e_{k+1}/e_k$. Ela se aproxima de que valor? Relacione com a multiplicidade $m = 2$.
+    \item Implemente o \textbf{Newton modificado}, $x_{k+1} = x_k - m \cdot f(x_k)/f'(x_k)$, e refaça. O que mudou?
+\end{itemize}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\textwidth]{images/2.6.png}
+    \caption{Saída para exercício 2.6}
+    \label{fig:2.6.png}
+\end{figure}
+
+\section{A armadilha do resíduo}
+
+Considere $f(x) = (x - 1)^{10}$.
+
+\begin{itemize}
+    \item Calcule $f(1,1)$ e $f(1,3)$. Comente a ordem de grandeza.
+    
+    \item Rode a bissecção em $[0; 1,5]$ com critério de parada \textbf{apenas} $|f(x)| < 10^{-8}$. Qual raiz você obtém? Qual o erro real em $x$?
+    
+    \item Refaça com o critério $|x_{k+1} - x_k| < 10^{-8}$. Compare.
+    
+    \item \textbf{Conclusão para o relatório:} em que situação o critério do resíduo é perigoso? E existe alguma situação em que ele é o critério \textit{mais} adequado?
+\end{itemize}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\textwidth]{images/2.7.png}
+    \caption{Saída para exercício 2.7}
+    \label{fig:2.7.png}
+\end{figure}
+
+\chapter{Situações-problema}
+
+\begin{tcolorbox}[colback=gray!5!white, colframe=gray!20!white, arc=0mm, boxrule=0.5pt]
+Em \textbf{todos} os problemas desta parte você deve, obrigatoriamente:
+\begin{enumerate}
+    \item Deduzir e escrever a função $f(x)$ cuja raiz resolve o problema.
+    \item \textbf{Fazer a Fase I explicitamente} --- mostrar como isolou a raiz (tabelamento ou gráfico).
+    \item Justificar a escolha do método e do chute inicial.
+    \item Reportar o resultado \textbf{com unidade física} e com número de algarismos significativos coerente com os dados.
+    \item Verificar a resposta substituindo de volta no problema original.
+\end{enumerate}
+\end{tcolorbox}
+
+\section*{Problema A \textnormal{---} Reservatório esférico}
+
+\par Um reservatório \textbf{esférico} de raio $R = 3,0\text{ m}$ é usado para armazenar água. O volume de líquido em função da altura $h$ medida a partir do fundo é
+\[
+V(h) = \pi h^2 \frac{3R - h}{3}
+\]
+
+\textbf{A.1} Determine a altura $h$ para que o reservatório contenha $40\text{ m}^3$ de água, com erro inferior a $1\text{ mm}$.
+
+\textbf{A.2} A equação resultante é uma cúbica. Encontre \textbf{todas as três raízes reais} (use os três métodos, ou a bissecção em três intervalos distintos). Duas delas não servem. \textbf{Explique o que cada raiz espúria significa} e qual restrição física as elimina.
+
+\textbf{A.3} Um sensor de nível será instalado. Construa uma tabela $h \times V$ para $V = 10, 20, \dots, 110\text{ m}^3$ resolvendo a equação para cada volume. Plote $h$ em função de $V$. \textit{Pergunta:} por que a curva é mais ``achatada'' no meio do que nas pontas?
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{images/3A1.png}
+    \caption{Resposta Problema 3 A.1}
+    \label{fig:3A1.png}
+\end{figure}
+Neste exercício, o método de Newton-Raphson foi utilizado, pois já se tinha uma boa aproximação inicial, além de possuir uma $f'(x)$ fácil de calcular.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{images/3A1_codigo.png}
+    \caption{Saída Problema 3 A.1}
+    \label{fig:3A1_codigo.png}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{images/3A2.png}
+    \caption{Resposta Problema 3 A.2}
+    \label{fig:3A2.png}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{images/3A2_codigo.png}
+    \caption{Saída Problema 3 A.2}
+    \label{fig:3A2_codigo.png}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{images/3A3_codigo.png}
+    \caption{Saída Problema 3 A.3}
+    \label{fig:3A3_codigo.png}
+\end{figure}
+
+\section*{Problema B \textnormal{---} Perda de carga em tubulação}
+
+O fator de atrito $f$ do escoamento turbulento em tubos é dado implicitamente pela \textbf{equação de Colebrook-White}:
+\[
+\frac{1}{\sqrt{f}} = -2 \log_{10}\left( \frac{\epsilon}{3,7 D} + \frac{2,51}{Re \sqrt{f}} \right)
+\]
+
+Dados de um trecho de adutora:
+\begin{center}
+\begin{tabular}{lr}
+\hline
+\textbf{Grandeza} & \textbf{Valor} \\ \hline
+Diâmetro interno $D$ & $0,100\text{ m}$ \\
+Rugosidade absoluta $\epsilon$ & $4,5 \times 10^{-5}\text{ m}$ (aço comercial) \\
+Número de Reynolds $Re$ & $2,0 \times 10^5$ \\
+Comprimento $L$ & $500\text{ m}$ \\
+Vazão $Q$ & $0,050\text{ m}^3\text{/s}$ \\ \hline
+\end{tabular}
+\end{center}
+
+\textbf{B.1} Determine $f$ com 6 casas decimais.
+
+\par Para definirmos f, podemos assumir:
+\[
+F(x) = x + 2 \log_{10}\left( \frac{\epsilon}{3,7 D} + \frac{2,51x}{Re} \right)
+\]
+onde $x = \frac{1}{\sqrt{f}}$.
+
+\par Assim, o problema passa a ser primeiramente achar x que zera aquela função. E, como a primeira derivada $F'(x)$ seria muito difícil de se achar para essa função, descartamos Newton-Raphson e a Secante possui ordem de convergência superior à da bissecção, utilizamos o método da Secante.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{images/3B1.png}
+    \caption{Saída Problema 3 B.1}
+    \label{fig:3B1.png}
+\end{figure}
+
+\textbf{B.2} Este é o problema em que a \textbf{secante brilha}. Explique por quê: escreva (ou tente escrever) $f'$ analiticamente e comente a dificuldade. Resolva pelos três métodos e compare o esforço.
+
+\par Como dito anteriormente ele possui uma boa ordem de convergência (superior a da bissecção) e 
+
+\textbf{B.3} Um bom chute inicial vem da fórmula explícita de \textbf{Swamee-Jain}:
+\[
+f_0 = \frac{0,25}{\left[ \log_{10}\left( \frac{\epsilon}{3,7 D} + \frac{5,74}{Re^{0,9}} \right) \right]^2}
+\]
+\section*{Problema C \textnormal{---} Equação de van der Waals}
+
+O gás ideal falha em altas pressões. A equação de van der Waals corrige isso:
+\[
+\left(P + \frac{a}{v^2}\right) (v - b) = RT
+\]
+
+onde $v$ é o volume molar ($\text{m}^3/\text{mol}$) e $R = 8,314\text{ J}/(\text{mol}\text{ K})$.
+
+Para o $\text{CO}_2$: $a = 0,3640\text{ Pa}\text{ m}^6/\text{mol}^2$ e $b = 4,267 \times 10^{-5}\text{ m}^3/\text{mol}$.
+
+\textbf{C.1} Para $T = 300\text{ K}$ e $P = 5,0\text{ MPa}$, calcule $v$ pelo modelo de gás ideal ($v = RT/P$) e depois pela equação de van der Waals. Qual o \textbf{erro percentual} do modelo ideal?
+
+\textbf{C.2} Rearranjando, obtém-se a forma polinomial
+\[
+P v^3 - (Pb + RT) v^2 + a\,v - ab = 0
+\]
+
+Investigue quantas raízes \textbf{reais} existem nas condições do item C.1. Use tabelamento em uma faixa ampla ($10^{-5}$ a $1 \times 10^{-2}\text{ m}^3/\text{mol}$) --- atenção, a escala é muito pequena, considere usar espaçamento logarítmico.
+
+\textbf{C.3} \textit{(discussão)} Abaixo da temperatura crítica ($T_c = 304,2\text{ K}$ para o $\text{CO}_2$) e em certas pressões, o cúbico tem \textbf{três} raízes reais positivas. Pesquise e explique brevemente o significado físico de cada uma. Qual delas seu método encontraria e por quê?
+
+\textbf{C.4} Construa a \textbf{isoterma} $P \times v$ para $T = 300\text{ K}$, variando $P$ de $1$ a $10\text{ MPa}$ em passos de $0,5\text{ MPa}$. Plote e compare com a curva do gás ideal no mesmo gráfico.
+
+{Passo 1 --- Dedução de $f(v)$.}
+Queremos o volume molar $v$ que satisfaz a equação de van der Waals para $T=300$ K e $P=5{,}0$ MPa. Multiplicando $\left(P + \dfrac{a}{v^2}\right)(v-b) = RT$ por $v^2$ e rearranjando, obtemos a forma polinomial já apresentada no enunciado (C.2), cuja raiz é o volume molar procurado:
+\[
+f(v) = P v^3 - (Pb + RT)v^2 + a\,v - ab = 0 .
+\]
+Como referência de comparação (modelo de gás ideal), calculamos também
+\[
+v_{\text{ideal}} = \frac{RT}{P} = \frac{8{,}314 \times 300}{5{,}0\times10^{6}} = 4{,}988\times10^{-4}\ \text{m}^3/\text{mol}.
+\]
+
+{Passo 2 --- Fase I: isolamento da raiz.}
+Como os valores de $v$ são da ordem de $10^{-4}\ \text{m}^3/\text{mol}$, um tabelamento linear seria grosseiro demais ou exigiria um número impraticável de pontos. Por isso, tabelamos $f(v)$ com \textbf{espaçamento logarítmico} em $[10^{-5},\,10^{-2}]\ \text{m}^3/\text{mol}$ (400 pontos), conforme pedido no item C.2. O tabelamento encontrou uma \textbf{única} mudança de sinal nessa faixa, isolando a raiz no intervalo
+\[
+v \in [\,3{,}601\times10^{-4},\ 3{,}664\times10^{-4}\,]\ \text{m}^3/\text{mol},
+\]
+próximo de $v_{\text{ideal}}$, como esperado fisicamente (fase vapor).
+
+{Passo 3 --- Justificativa do método e do chute inicial.}
+Escolhemos o método de \textbf{Newton-Raphson}. A derivada
+\[
+f'(v) = 3Pv^2 - 2(Pb+RT)v + a
+\]
+é um polinômio simples e barato de obter analiticamente (sem risco de erro de derivação), e Newton converge quadraticamente quando o chute inicial é bom. Usamos $x_0 = v_{\text{ideal}} = 4{,}988\times10^{-4}\ \text{m}^3/\text{mol}$, pois na faixa de pressão considerada o comportamento real do gás não deve se afastar muito do modelo ideal, e o Passo 2 confirmou que a raiz física está de fato próxima desse valor.
+
+{Passo 4 --- Resultado.}
+Com critério de parada $|f(v_{k+1})|<\varepsilon$ ou $|v_{k+1}-v_k|<\varepsilon$ (tolerância relativa, $\varepsilon = 10^{-6}\,v_{\text{ideal}}$), o método convergiu em $5$ iterações para
+\[
+v_{\text{vdW}} = 3{,}656\times10^{-4}\ \text{m}^3/\text{mol} \quad (3\text{ algarismos significativos, coerentes com } a \text{ e } b).
+\]
+O erro percentual do modelo de gás ideal em relação a esse resultado é
+\[
+\frac{|v_{\text{ideal}} - v_{\text{vdW}}|}{v_{\text{vdW}}}\times100\% \approx 36{,}4\%,
+\]
+uma diferença expressiva, o que confirma que o modelo ideal falha nessas condições de alta pressão, como antecipado no enunciado.
+
+{Passo 5 --- Verificação.}
+Substituindo $v_{\text{vdW}}$ de volta na equação original:
+\[
+\left(P+\frac{a}{v_{\text{vdW}}^2}\right)(v_{\text{vdW}}-b) = 2494{,}20\ \text{J/mol} \approx RT = 2494{,}20\ \text{J/mol}.
+\]
+O resíduo do polinômio é $f(v_{\text{vdW}}) \approx 1{,}3\times10^{-13}$ ($\approx 0$), confirmando a raiz.
+
+{C.2 --- Número de raízes reais.}
+Como mostrado no Passo 2, nas condições de $T=300$ K e $P=5{,}0$ MPa existe apenas \textbf{uma} raiz real positiva no intervalo investigado $[10^{-5}, 10^{-2}]\ \text{m}^3/\text{mol}$, ou seja, $v_{\text{vdW}}=3{,}656\times10^{-4}\ \text{m}^3/\text{mol}$ é a única solução física relevante nessas condições.
+
+{C.3 --- Discussão física das três raízes.}
+A pressão de saturação do $\text{CO}_2$ a $300$ K é da ordem de $\sim 6{,}7$ MPa. Como $P = 5{,}0$ MPa está \textbf{abaixo} dessa saturação, o $\text{CO}_2$ está em fase \textbf{vapor pura} (região de uma só fase), o que explica a raiz única encontrada nos itens C.1/C.2. De forma geral, para $T<T_c=304{,}2$ K e $P$ \textbf{acima} da pressão de saturação, o cúbico de van der Waals pode ter até três raízes reais positivas (região de coexistência líquido--vapor da isoterma):
+\begin{itemize}
+    \item a \textbf{menor} raiz corresponde ao volume molar do \textbf{líquido saturado};
+    \item a \textbf{maior} raiz corresponde ao volume molar do \textbf{vapor saturado};
+    \item a raiz \textbf{intermediária} não tem significado físico (região onde $dP/dv>0$, mecanicamente instável --- um artefato da curva suave de van der Waals, que na isoterma real tem um patamar horizontal em vez dessa "corcova").
+\end{itemize}
+Partindo de um chute próximo do gás ideal (fase vapor), o método de Newton sempre converge para a raiz \textbf{maior} (fase vapor) quando ela existe, que é a de maior interesse prático ao tratar o $\text{CO}_2$ como fluido de processo em fase gasosa.
+
+{C.4 --- Isoterma $P\times v$.}
+A Figura~\ref{fig:isoterma_C} compara a isoterma de van der Waals com a do gás ideal para $T=300$ K, $P$ variando de $1$ a $10$ MPa em passos de $0{,}5$ MPa (cada ponto resolvido por Newton, com chute $v_0 = RT/P$ específico para cada pressão). Em toda a faixa, o gás ideal superestima o volume molar em relação ao van der Waals --- o termo de atração molecular $a/v^2$ "puxa" as moléculas para mais perto, reduzindo o volume real ocupado frente ao previsto pelo modelo ideal.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/problema_C_isoterma.png}
+    \caption{Isoterma $P\times v$ em $T=300$ K: van der Waals \textit{versus} gás ideal.}
+    \label{fig:isoterma_C}
+\end{figure}
+
+\section*{Problema D \textnormal{---} Taxa Interna de Retorno}
+
+Uma empresa avalia um projeto com o seguinte fluxo de caixa (em mil R\$):
+
+\begin{center}
+\begin{tabular}{lccccc}
+\hline
+\textbf{Ano} & $0$ & $1$ & $2$ & $3$ & $4$ \\ \hline
+\textbf{Fluxo} & $-1000$ & $+300$ & $+350$ & $+400$ & $+450$ \\ \hline
+\end{tabular}
+\end{center}
+
+O \textbf{Valor Presente Líquido} a uma taxa $i$ é
+\[
+VPL(i) = \sum_{k=0}^{n} \frac{C_k}{(1 + i)^k}
+\]
+
+A \textbf{Taxa Interna de Retorno (TIR)} é a taxa que zera o VPL.
+
+\textbf{D.1} Calcule a TIR com precisão de $10^{-6}$.
+
+\textbf{D.2} Plote $VPL(i)$ para $i \in [0; 0,5]$ e mostre graficamente onde está a raiz.
+
+\textbf{D.3} \textit{(decisão)} Se o custo de capital da empresa for $15\%$ ao ano, o projeto deve ser aceito? E se for $20\%$? Justifique com o VPL calculado em cada caso.
+
+\textbf{D.4} \textit{(o problema das múltiplas TIRs)} Agora considere um segundo projeto:
+
+\begin{center}
+\begin{tabular}{lccc}
+\hline
+\textbf{Ano} & $0$ & $1$ & $2$ \\ \hline
+\textbf{Fluxo} & $-1000$ & $+2500$ & $-1540$ \\ \hline
+\end{tabular}
+\end{center}
+
+Plote o VPL e mostre que existem \textbf{duas} taxas que o zeram. Encontre ambas.
+
+\begin{tcolorbox}[colback=red!5!white, colframe=red!20!white, arc=0mm, boxrule=0.5pt]
+\textbf{Pergunta crítica.} O que acontece se um analista rodar Newton com um único chute inicial e reportar o resultado sem fazer a Fase I? Que decisão errada isso pode gerar?
+\end{tcolorbox}
+
+{Passo 1 --- Dedução de $f(i)$.}
+A TIR é, por definição, a taxa $i$ que zera o VPL. Assim, a raiz procurada é a de
+\[
+f(i) = VPL(i) = \sum_{k=0}^{4} \frac{C_k}{(1+i)^k} = -1000 + \frac{300}{1+i} + \frac{350}{(1+i)^2} + \frac{400}{(1+i)^3} + \frac{450}{(1+i)^4} = 0.
+\]
+Para uso em Newton, precisamos também de
+\[
+f'(i) = \frac{d(VPL)}{di} = \sum_{k=0}^{4} \frac{-k\,C_k}{(1+i)^{k+1}}.
+\]
+
+{Passo 2 --- Fase I: isolamento da raiz.}
+Tabelamos $f(i)=VPL(i)$ em $i\in[0;\,0{,}5]$ com $51$ pontos igualmente espaçados (item D.2). O tabelamento encontrou uma única mudança de sinal, isolando a raiz no intervalo
+\[
+i \in [0{,}17,\ 0{,}18],
+\]
+como mostra a Figura~\ref{fig:vpl_projeto1}: a curva $VPL(i)$ é monotonicamente decrescente em todo o intervalo $[0;0{,}5]$ (fluxo de caixa convencional --- uma única troca de sinal em $C_k$), cruzando o eixo uma única vez.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/problema_D_vpl_projeto1.png}
+    \caption{$VPL(i)$ do projeto 1 em $i\in[0;50\%]$, com a raiz (TIR) destacada.}
+    \label{fig:vpl_projeto1}
+\end{figure}
+
+{Passo 3 --- Justificativa do método e do chute inicial.}
+Escolhemos o método de \textbf{Newton-Raphson}. Justificativa: $f'(i)$ é uma soma simples de potências de $(1+i)$, barata de calcular analiticamente, e a curva $VPL(i)$ é suave e sem inflexões bruscas na região isolada --- condições ideais para a convergência quadrática de Newton. Usamos o chute inicial $i_0 = 0{,}10$ ($10\%$), uma taxa de referência de mercado tipicamente usada como primeira estimativa e razoavelmente próxima da região já isolada no Passo 2.
+
+{Passo 4 --- Resultado.}
+Com critério de parada $|VPL(i_{k+1})|<\varepsilon$ ou $|i_{k+1}-i_k|<\varepsilon$, $\varepsilon=10^{-6}$ (conforme exigido em D.1), o método convergiu em $4$ iterações para
+\[
+\text{TIR} = 17{,}0937\%\ \big(i \approx 0{,}170937\big),
+\]
+reportada com 6 algarismos significativos, coerente com a tolerância $10^{-6}$ pedida.
+
+{Passo 5 --- Verificação.}
+Substituindo a TIR de volta na definição do VPL:
+\[
+VPL(0{,}170937) \approx 1{,}7\times10^{-12}\ \text{mil R\$} \approx 0,
+\]
+confirmando que a taxa encontrada de fato zera o valor presente líquido do fluxo de caixa original.
+
+{D.3 --- Decisão de aceitar ou rejeitar o projeto.}
+Calculando o VPL diretamente nos custos de capital pedidos:
+\begin{itemize}
+    \item Custo de capital $=15\%$: $VPL(0{,}15) = 45{,}82$ mil R\$ $>0$ $\Rightarrow$ \textbf{ACEITAR} o projeto (TIR $=17{,}09\%>15\%$).
+    \item Custo de capital $=20\%$: $VPL(0{,}20) = -58{,}45$ mil R\$ $<0$ $\Rightarrow$ \textbf{REJEITAR} o projeto (TIR $=17{,}09\%<20\%$).
+\end{itemize}
+Em ambos os casos, a decisão é consistente com a regra clássica da TIR: aceitar se $\text{TIR} > $ custo de capital.
+
+{D.4 --- O problema das múltiplas TIRs.}
+Para o segundo projeto, fluxo $[-1000,\,+2500,\,-1540]$, há \textbf{duas} trocas de sinal no fluxo de caixa (não-convencional). Tabelando $VPL(i)$ em uma faixa ampla ($i\in[-0{,}3;\,1{,}0]$), identificamos \textbf{dois} intervalos com mudança de sinal, isolando as duas raízes em $[9{,}5\%;\,10{,}2\%]$ e $[39{,}6\%;\,40{,}2\%]$. Aplicando bissecção separadamente em cada intervalo (garantindo achar ambas as raízes, sem depender de um único chute), obtemos:
+\[
+\text{TIR}_1 = 10{,}0000\%, \qquad \text{TIR}_2 = 40{,}0000\%,
+\]
+ambas verificadas por $VPL(\text{TIR}_1)\approx -1{,}1\times10^{-6}$ e $VPL(\text{TIR}_2)\approx -3{,}3\times10^{-7}$ (mil R\$), praticamente nulos. A Figura~\ref{fig:vpl_projeto2} mostra a curva $VPL(i)$ do projeto 2, com as duas raízes destacadas.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/problema_D_vpl_projeto2.png}
+    \caption{$VPL(i)$ do projeto 2, mostrando as duas TIRs (10\% e 40\%).}
+    \label{fig:vpl_projeto2}
+\end{figure}
+
+{Resposta à pergunta crítica.}
+Se um analista rodar Newton com um único chute inicial (por exemplo, $i_0=0{,}5$) e reportar o resultado sem fazer a Fase I, ele encontra \textbf{apenas uma} das duas TIRs (10\% ou 40\%, dependendo do chute) e pode concluir erroneamente que o projeto tem uma única taxa de retorno bem definida. Isso é perigoso porque a regra da TIR (``aceite se $\text{TIR}>$ custo de capital'') só faz sentido quando há uma única raiz: com fluxo de caixa não-convencional como este, pode haver várias taxas que zeram o VPL, e a decisão de aceitar/rejeitar passa a depender de \textbf{qual} TIR foi encontrada. Um analista que pula a Fase I pode reportar ``TIR$=40\%$, superior ao custo de capital de $15\%$, ACEITAR'' sem perceber que a $10\%$ o projeto também zera e que, para custos de capital \textbf{entre} as duas raízes, o VPL pode ser negativo --- levando a uma decisão de investimento errada.
+
+\section*{Problema E \textnormal{---} Equação de Kepler \textnormal{(8 pontos)}}
+
+A posição de um corpo em órbita elíptica é obtida resolvendo a \textbf{equação de Kepler}:
+\[
+M = E - e \sin E
+\]
+
+onde $M$ é a anomalia média (conhecida, proporcional ao tempo), $e$ é a excentricidade da órbita e $E$ é a anomalia excêntrica (a incógnita).
+
+\textbf{E.1} Para a órbita do cometa Halley, $e = 0,967$. Calcule $E$ para $M = 0,2\text{ rad}$.
+
+\textbf{E.2} \textit{(robustez)} Resolva para os três casos abaixo, usando Newton com chute inicial $E_0 = M$:
+\begin{center}
+\begin{tabular}{lcc}
+\hline
+\textbf{Caso} & $e$ & \textbf{$M$ (rad)} \\ \hline
+(i)   & $0,10$ & $0,5$ \\
+(ii)  & $0,90$ & $0,1$ \\
+(iii) & $0,99$ & $0,01$ \\ \hline
+\end{tabular}
+\end{center}
+
+Tabele o número de iterações de cada caso. \textbf{O que acontece com o esforço à medida que $e \to 1$?} Explique olhando para $f'(E) = 1 - e \cos E$ perto de $E = 0$.
+
+\textbf{E.3} Um chute inicial melhor para órbitas muito excêntricas é $E_0 = M + e \sin M$. Refaça o caso (iii) com ele e compare.
+
+\textbf{E.4} \textit{(comparação)} Para o caso (iii), rode também a bissecção em $[0; \pi]$. Ela converge? Em quantas iterações? Qual método você recomendaria para um software de rastreamento de satélites que precisa resolver essa equação \textbf{milhões de vezes por segundo}, e por quê?
+
+\chapter{Relatório e discussão}
+
+Responda de forma dissertativa, com base nos seus próprios resultados.
+
+\textbf{4.1} Construa uma tabela-resumo com todos os problemas da Parte 3, indicando para cada um: o método escolhido, o motivo da escolha e o número de iterações gasto.
+
+\textbf{4.2} Em qual problema da Parte 3 a \textbf{Fase I} foi mais decisiva? Descreva o que teria dado errado se você a tivesse pulado.
+
+\textbf{4.3} Em qual problema a \textbf{secante} foi claramente superior a Newton? E existiu algum em que Newton foi claramente superior à secante? Fundamente com os números de avaliações de função que você mediu.
+
+\textbf{4.4} Um colega afirma: \textit{``a bissecção é obsoleta, ninguém usa isso na prática''}. Escreva uma resposta técnica de até 10 linhas, usando pelo menos um resultado do seu próprio trabalho como argumento.
+
+\textbf{4.5} Descreva, em pseudocódigo, como você combinaria bissecção e Newton em um \textbf{método híbrido} que seja simultaneamente seguro e rápido. Quando seu algoritmo decidiria trocar de um para o outro?
+
+% ---
+% Finaliza a parte no bookmark do PDF
+% para que se inicie o bookmark na raiz
+% e adiciona espaço de parte no Sumário
+% ---
+\phantompart
+
+
+% ----------------------------------------------------------
+% ELEMENTOS PÓS-TEXTUAIS
+% ----------------------------------------------------------
+\postextual
+
+% ----------------------------------------------------------
+% Referências bibliográficas
+% ----------------------------------------------------------
+
+
+% ----------------------------------------------------------
+% Apêndices
+% ----------------------------------------------------------
+
+% ---
+% Inicia os apêndices
+% ---
+%\begin{apendicesenv}
+
+% Imprime uma página indicando o início dos apêndices
+%\partapendices
+
+% ----------------------------------------------------------
+%\chapter{BinToBCD2.v}
+%\label{code:BinToBCD2.v}
+%Código do arquivo BinToBCD2.v
+%\lstinputlisting{Codigos/BinToBCD2.v} 
+% ----------------------------------------------------------
+
+% ----------------------------------------------------------
+%\chapter{Apêndice 2}
+% ----------------------------------------------------------
+
+
+%\end{apendicesenv}
+% ---
+
+
+% ----------------------------------------------------------
+% Anexos
+% ----------------------------------------------------------
+
+% ---
+% Inicia os anexos
+% ---
+%\begin{anexosenv}
+
+% Imprime uma página indicando o início dos anexos
+%\partanexos
+
+% ---
+%\chapter{Anexo 1}
+% ---
+
+% ---
+%\chapter{Anexo 2}
+% ---
+
+%\end{anexosenv}
+
+%---------------------------------------------------------------------
+% INDICE REMISSIVO
+%---------------------------------------------------------------------
+
+\phantompart
+
+\printindex
+
+
+\end{document}
