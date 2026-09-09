@@ -175,6 +175,95 @@ def problema_A():
 
 
 # =======================================================================
+# Problema B - Perda de carga em tubulação
+# =======================================================================
+
+
+def problema_B():
+    D = 0.1
+    e = 4.5e-5
+    Re = 2e5
+    L = 500
+    Q = 0.05
+
+    f = lambda x: x + 2*math.log10((e/(3.7*D)) + ((2.51*x)/Re))
+    df = lambda x: 1 + (2/math.log(10, math.e))*((2.51/Re)/((e/(3.7*D)) + ((2.51*x)/Re)))
+    intervalos = tabelar_sinais(f, 0, 20, 15)
+    a = intervalos[0][0]
+    b = intervalos[0][1]
+    print('B1:')
+    print(f'Intervalos que possuem mudanças de raiz: {intervalos}\nAplicar secante')
+    raiz, hist = secante(f, a, b)
+    print(f'x = {raiz}, f = {1/(raiz**2)}')
+    print(f'iterações: {hist[-1]['k'] + 1}')
+
+    f_valor = 1/(raiz**2)
+
+    print()
+    print('B2:')
+    print(f'Intervalos que possuem mudanças de raiz: {intervalos}\nAplicar os três métodos.')
+    print('Secante')
+    raiz, hist = secante(f, a, b)
+    print(f'x = {raiz}, f = {1/(raiz**2)}')
+    print(f'iterações: {hist[-1]['k'] + 1}')
+    print('Newton')
+    raiz, hist = newton(f, df, a)
+    print(f'x = {raiz}, f = {1/(raiz**2)}')
+    print(f'iterações: {hist[-1]['k'] + 1}')
+    print('Bissecção')
+    raiz, hist = bisseccao(f, a, b)
+    print(f'x = {raiz}, f = {1/(raiz**2)}')
+    print(f'iterações: {hist[-1]['k'] + 1}')
+
+    print()
+    print('B3:')
+    f0 = 0.25/((math.log10((e/(3.7*D)) + (5.74/(Re**0.9))))**2)
+    
+    print(f'f0 = {f0}')
+
+    print('Secante')
+    raiz, hist = secante(f, f0, b)
+    print(f'x = {raiz}, f = {1/(raiz**2)}')
+    print(f'iterações: {hist[-1]['k'] + 1}')
+    print('Newton')
+    raiz, hist = newton(f, df, f0)
+    print(f'x = {raiz}, f = {1/(raiz**2)}')
+    print(f'iterações: {hist[-1]['k'] + 1}')
+
+    f0 = 0.05
+
+    print(f'f0 = {f0}')
+
+    print('Secante')
+    raiz, hist = secante(f, f0, b)
+    print(f'x = {raiz}, f = {1/(raiz**2)}')
+    print(f'iterações: {hist[-1]['k'] + 1}')
+    print('Newton')
+    raiz, hist = newton(f, df, f0)
+    print(f'x = {raiz}, f = {1/(raiz**2)}')
+    print(f'iterações: {hist[-1]['k'] + 1}')
+
+    print()
+    print('Nenhuma iteração foi economizada em relação ao chute arbitrário')
+
+    print()
+    print("B4:")
+    A = (math.pi * D**2)/4
+    V = Q/A
+    h_f = f_valor * (L/D) * ((V**2)/(2*9.81))
+
+    print(f'h_f = {h_f}')
+    
+    print()
+    print("B5:")
+    h_f_new = 0.02 * (L/D) * ((V**2)/(2*9.81))
+
+    print(f'h_f = {h_f_new}, erro = {(abs(h_f - h_f_new)/h_f)*100:.2f}%')
+
+    print('Se vale a pena ou não dependeria da aplicação mas o erro percentual parece sim, muito baixo.')
+# =======================================================================
+
+# =======================================================================
 # Problema C - Equacao de van der Waals
 # =======================================================================
 
@@ -483,6 +572,8 @@ def problema_D():
 
 if __name__ == "__main__":
     problema_A()
+    print("\n" + "=" * 70)
+    problema_B
     print("\n" + "=" * 70)
     problema_C()
     print("\n" + "=" * 70)
