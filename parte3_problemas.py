@@ -195,7 +195,7 @@ def problema_B():
     print(f'Intervalos que possuem mudanças de raiz: {intervalos}\nAplicar secante')
     raiz, hist = secante(f, a, b)
     print(f'x = {raiz}, f = {1/(raiz**2)}')
-    print(f'iterações: {hist[-1]['k'] + 1}')
+    print(f'iterações: {hist[-1]["k"] + 1}')
 
     f_valor = 1/(raiz**2)
 
@@ -205,15 +205,15 @@ def problema_B():
     print('Secante')
     raiz, hist = secante(f, a, b)
     print(f'x = {raiz}, f = {1/(raiz**2)}')
-    print(f'iterações: {hist[-1]['k'] + 1}')
+    print(f'iterações: {hist[-1]["k"] + 1}')
     print('Newton')
     raiz, hist = newton(f, df, a)
     print(f'x = {raiz}, f = {1/(raiz**2)}')
-    print(f'iterações: {hist[-1]['k'] + 1}')
+    print(f'iterações: {hist[-1]["k"] + 1}')
     print('Bissecção')
     raiz, hist = bisseccao(f, a, b)
     print(f'x = {raiz}, f = {1/(raiz**2)}')
-    print(f'iterações: {hist[-1]['k'] + 1}')
+    print(f'iterações: {hist[-1]["k"] + 1}')
 
     print()
     print('B3:')
@@ -224,11 +224,11 @@ def problema_B():
     print('Secante')
     raiz, hist = secante(f, f0, b)
     print(f'x = {raiz}, f = {1/(raiz**2)}')
-    print(f'iterações: {hist[-1]['k'] + 1}')
+    print(f'iterações: {hist[-1]["k"] + 1}')
     print('Newton')
     raiz, hist = newton(f, df, f0)
     print(f'x = {raiz}, f = {1/(raiz**2)}')
-    print(f'iterações: {hist[-1]['k'] + 1}')
+    print(f'iterações: {hist[-1]["k"] + 1}')
 
     f0 = 0.05
 
@@ -237,11 +237,11 @@ def problema_B():
     print('Secante')
     raiz, hist = secante(f, f0, b)
     print(f'x = {raiz}, f = {1/(raiz**2)}')
-    print(f'iterações: {hist[-1]['k'] + 1}')
+    print(f'iterações: {hist[-1]["k"] + 1}')
     print('Newton')
     raiz, hist = newton(f, df, f0)
     print(f'x = {raiz}, f = {1/(raiz**2)}')
-    print(f'iterações: {hist[-1]['k'] + 1}')
+    print(f'iterações: {hist[-1]["k"] + 1}')
 
     print()
     print('Nenhuma iteração foi economizada em relação ao chute arbitrário')
