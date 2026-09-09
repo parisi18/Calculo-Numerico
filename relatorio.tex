@@ -870,6 +870,181 @@ Tabele o número de iterações de cada caso. \textbf{O que acontece com o esfor
 
 \textbf{E.4} \textit{(comparação)} Para o caso (iii), rode também a bissecção em $[0; \pi]$. Ela converge? Em quantas iterações? Qual método você recomendaria para um software de rastreamento de satélites que precisa resolver essa equação \textbf{milhões de vezes por segundo}, e por quê?
 
+\subsection*{Resolução}
+
+Dada a equação de Kepler
+\[
+M = E - e\sin E,
+\]
+temos
+\[
+f(E)=E-e\sin E-M
+\qquad\text{e}\qquad
+f'(E)=1-e\cos E.
+\]
+
+Pelo método de Newton,
+\[
+E_{k+1}
+=
+E_k-
+\frac{E_k-e\sin(E_k)-M}
+{1-e\cos(E_k)}.
+\]
+
+\subsection*{E.1}
+
+Para $e=0{,}967$ e $M=0{,}2$, temos
+\[
+f(E)=E-0{,}967\sin E-0{,}2.
+\]
+
+\begin{align*}
+f(1)
+&=1-0{,}967\sin(1)-0{,}2
+\approx 0{,}01370,\\
+f(1{,}1)
+&=1{,}1-0{,}967\sin(1{,}1)-0{,}2
+\approx 0{,}03820.
+\end{align*}
+
+Portanto,
+\[
+E\in(1;\,1{,}1).
+\]
+
+Usando Newton com $E_0=1$ e $\varepsilon=10^{-8}$:
+\begin{align*}
+E_1 &= 1{,}0286945515,\\
+E_2 &= 1{,}0280219628,\\
+E_3 &= 1{,}0280215886.
+\end{align*}
+
+Logo,
+\[
+\boxed{E\approx 1{,}028021589\ \text{rad}}
+\qquad\text{(3 iterações).}
+\]
+
+Verificando na equação original,
+\begin{align*}
+E-e\sin(E)
+&\approx 1{,}0280215886
+-0{,}967\sin(1{,}0280215886)\\
+&\approx 0{,}2000000000=M.
+\end{align*}
+
+\subsection*{E.2}
+
+Como
+\[
+f'(E)=1-e\cos E,
+\]
+para $E\approx 0$ temos $\cos(E)\approx 1$, logo
+\[
+f'(E)\approx 1-e.
+\]
+
+Assim,
+\[
+e\to 1
+\quad\Longrightarrow\quad
+f'(E)\to 0.
+\]
+
+Consequentemente, o termo
+\[
+\frac{f(E)}{f'(E)}
+\]
+pode tornar-se grande, e o método de Newton pode exigir mais iterações.
+Portanto, o esforço computacional aumenta à medida que $e\to 1$.
+
+\subsection*{E.3}
+
+Para $e=0{,}99$ e $M=0{,}01$, tomamos
+\[
+E_0=M+e\sin(M).
+\]
+
+Logo,
+\[
+E_0
+=0{,}01+0{,}99\sin(0{,}01)
+\approx 0{,}0198998350.
+\]
+
+Aplicando Newton,
+\[
+E_{k+1}
+=
+E_k-
+\frac{E_k-0{,}99\sin(E_k)-0{,}01}
+{1-0{,}99\cos(E_k)}.
+\]
+
+As primeiras iterações são
+\begin{align*}
+E_1 &\approx 0{,}98103,\\
+E_2 &\approx 0{,}65110,\\
+E_3 &\approx 0{,}45773.
+\end{align*}
+
+Após 7 iterações,
+\[
+\boxed{E\approx 0{,}3422703165}.
+\]
+
+Comparando os chutes iniciais:
+\begin{center}
+\begin{tabular}{lc}
+\hline
+\textbf{Chute inicial} & \textbf{Iterações}\\ \hline
+$E_0=M=0{,}01$ & 7\\
+$E_0=M+e\sin(M)\approx 0{,}019899835$ & 7\\ \hline
+\end{tabular}
+\end{center}
+
+Neste caso, o novo chute não reduziu o número de iterações.
+
+\subsection*{E.4}
+
+Para $e=0{,}99$ e $M=0{,}01$, temos
+\[
+f(E)=E-0{,}99\sin E-0{,}01.
+\]
+
+No intervalo $[0,\pi]$,
+\[
+f(0)=-0{,}01<0
+\qquad\text{e}\qquad
+f(\pi)=\pi-0{,}01>0.
+\]
+
+Logo, pelo Teorema de Bolzano, existe uma raiz no intervalo.
+Além disso,
+\[
+f'(E)=1-0{,}99\cos E>0,
+\]
+portanto a raiz é única.
+
+Aplicando a bissecção com $\varepsilon=10^{-6}$:
+\[
+\boxed{E\approx 0{,}3422702123\ \text{rad}}
+\qquad\text{em 22 iterações.}
+\]
+
+Comparação:
+\begin{center}
+\begin{tabular}{lc}
+\hline
+\textbf{Método} & \textbf{Iterações}\\ \hline
+Newton & 7\\
+Bissecção & 22\\ \hline
+\end{tabular}
+\end{center}
+
+Assim, Newton é mais indicado quando a velocidade computacional é prioritária.
+
 \section*{Problema F \textnormal{---} Deflexão de viga (BÔNUS, +8 pontos)}
 
 Uma viga de comprimento $L = 600\text{ cm}$, simplesmente apoiada e com carga distribuída crescente, tem deflexão
