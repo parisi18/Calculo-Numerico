@@ -902,10 +902,10 @@ f(E)=E-0{,}967\sin E-0{,}2.
 \begin{align*}
 f(1)
 &=1-0{,}967\sin(1)-0{,}2
-\approx 0{,}01370,\\
+\approx -0{,}013702442309235952,\\
 f(1{,}1)
 &=1{,}1-0{,}967\sin(1{,}1)-0{,}2
-\approx 0{,}03820.
+\approx 0{,}038202482820592076.
 \end{align*}
 
 Portanto,
@@ -915,135 +915,601 @@ E\in(1;\,1{,}1).
 
 Usando Newton com $E_0=1$ e $\varepsilon=10^{-8}$:
 \begin{align*}
-E_1 &= 1{,}0286945515,\\
-E_2 &= 1{,}0280219628,\\
-E_3 &= 1{,}0280215886.
+E_1 &= 1{,}028694551464976,\\
+E_2 &= 1{,}028021962832398,\\
+E_3 &= 1{,}028021588552131.
 \end{align*}
 
 Logo,
 \[
-\boxed{E\approx 1{,}028021589\ \text{rad}}
+\boxed{E\approx 1{,}028021588552131\ \text{rad}}
 \qquad\text{(3 iterações).}
 \]
 
 Verificando na equação original,
 \begin{align*}
 E-e\sin(E)
-&\approx 1{,}0280215886
--0{,}967\sin(1{,}0280215886)\\
-&\approx 0{,}2000000000=M.
+&\approx 1{,}028021588552131
+-0{,}967\sin(1{,}028021588552131)\\
+&\approx 0{,}20000000000005802=M.
 \end{align*}
 
 \subsection*{E.2}
 
+Foi aplicado o método de Newton com chute inicial
+\[
+E_0=M
+\]
+e tolerância
+\[
+\varepsilon=10^{-8}.
+\]
+
+A função e sua derivada são
+\[
+f(E)=E-e\sin(E)-M
+\]
+e
+\[
+f'(E)=1-e\cos(E).
+\]
+
+\subsubsection*{Caso (i)}
+
+Para
+\[
+e=0,10,
+\qquad
+M=0,5,
+\qquad
+E_0=0,5,
+\]
+obteve-se:
+
+\[
+\begin{array}{c|c|c|c}
+k & E_k & f(E_k) & |E_k-E_{k-1}| \\ \hline
+1 & 0,5525546591 & 6,8316\times10^{-5} & 5,2555\times10^{-2} \\
+2 & 0,5524799871 & 1,4632\times10^{-10} & 7,4672\times10^{-5}
+\end{array}
+\]
+
+Portanto,
+
+\[
+\boxed{E\approx0,5524799871\text{ rad}}
+\]
+
+em
+
+\[
+\boxed{2\text{ iterações}}.
+\]
+
+O resíduo final foi
+
+\[
+|f(E)|
+\approx
+1,4632\times10^{-10}
+<
+10^{-8}.
+\]
+
+Além disso,
+
+\[
+f'(E_0)
+=
+1-0,1\cos(0,5)
+\approx
+0,9122417438.
+\]
+
+Verificando na equação original,
+
+\[
+E-e\sin(E)
+\approx
+0,500000000146
+\approx
+0,5.
+\]
+
+
+\subsubsection*{Caso (ii)}
+
+Para
+\[
+e=0,90,
+\qquad
+M=0,1,
+\qquad
+E_0=0,1,
+\]
+obteve-se:
+
+\[
+\begin{array}{c|c|c|c}
+k & E_k & f(E_k) & |E_k-E_{k-1}| \\ \hline
+1 & 0,9598401752 & 1,2265\times10^{-1} & 8,5984\times10^{-1} \\
+2 & 0,7062807935 & 2,2173\times10^{-2} & 2,5356\times10^{-1} \\
+3 & 0,6359569603 & 1,4041\times10^{-3} & 7,0324\times10^{-2} \\
+4 & 0,6308687947 & 6,9037\times10^{-6} & 5,0882\times10^{-3} \\
+5 & 0,6308435282 & 1,6945\times10^{-10} & 2,5267\times10^{-5}
+\end{array}
+\]
+
+Portanto,
+
+\[
+\boxed{E\approx0,6308435282\text{ rad}}
+\]
+
+em
+
+\[
+\boxed{5\text{ iterações}}.
+\]
+
+O resíduo final foi
+
+\[
+|f(E)|
+\approx
+1,6945\times10^{-10}
+<
+10^{-8}.
+\]
+
+Além disso,
+
+\[
+f'(E_0)
+=
+1-0,9\cos(0,1)
+\approx
+0,1044962512.
+\]
+
+Verificando,
+
+\[
+E-e\sin(E)
+\approx
+0,100000000169
+\approx
+0,1.
+\]
+
+
+\subsubsection*{Caso (iii)}
+
+Para
+\[
+e=0,99,
+\qquad
+M=0,01,
+\qquad
+E_0=0,01,
+\]
+obteve-se:
+
+\[
+\begin{array}{c|c|c|c}
+k & E_k & f(E_k) & |E_k-E_{k-1}| \\ \hline
+1 & 0,9951072598 & 1,5468\times10^{-1} & 9,8511\times10^{-1} \\
+2 & 0,6596027079 & 4,2928\times10^{-2} & 3,3550\times10^{-1} \\
+3 & 0,4623846181 & 1,0762\times10^{-2} & 1,9722\times10^{-1} \\
+4 & 0,3679479770 & 1,8435\times10^{-3} & 9,4437\times10^{-2} \\
+5 & 0,3437754251 & 1,0186\times10^{-4} & 2,4173\times10^{-2} \\
+6 & 0,3422758727 & 3,7463\times10^{-7} & 1,4996\times10^{-3} \\
+7 & 0,3422703166 & 5,1288\times10^{-12} & 5,5562\times10^{-6}
+\end{array}
+\]
+
+Portanto,
+
+\[
+\boxed{E\approx0,3422703166\text{ rad}}
+\]
+
+em
+
+\[
+\boxed{7\text{ iterações}}.
+\]
+
+O resíduo final foi
+
+\[
+|f(E)|
+\approx
+5,1288\times10^{-12}
+<
+10^{-8}.
+\]
+
+Além disso,
+
+\[
+f'(E_0)
+=
+1-0,99\cos(0,01)
+\approx
+0,0100494996.
+\]
+
+Verificando,
+
+\[
+E-e\sin(E)
+\approx
+0,0100000000051
+\approx
+0,01.
+\]
+
+
+\subsubsection*{Comparação}
+
+Os resultados obtidos foram:
+
+\[
+\begin{array}{c|c|c|c}
+\text{Caso} & e & E & \text{Iterações} \\ \hline
+(i)   & 0,10 & 0,5524799871 & 2 \\
+(ii)  & 0,90 & 0,6308435282 & 5 \\
+(iii) & 0,99 & 0,3422703166 & 7
+\end{array}
+\]
+
+Observa-se que o número de iterações aumentou de
+
+\[
+2\longrightarrow5\longrightarrow7
+\]
+
+à medida que a excentricidade se aproximou de $1$.
+
 Como
 \[
-f'(E)=1-e\cos E,
+f'(E)=1-e\cos(E),
 \]
-para $E\approx 0$ temos $\cos(E)\approx 1$, logo
+para $E\approx0$ temos
 \[
-f'(E)\approx 1-e.
+\cos(E)\approx1,
+\]
+logo
+\[
+f'(E)\approx1-e.
 \]
 
 Assim,
+
 \[
-e\to 1
+e\to1
 \quad\Longrightarrow\quad
-f'(E)\to 0.
+f'(E)\to0.
 \]
 
-Consequentemente, o termo
+Pelo método de Newton,
+
 \[
-\frac{f(E)}{f'(E)}
+E_{k+1}
+=
+E_k-\frac{f(E_k)}{f'(E_k)}.
 \]
-pode tornar-se grande, e o método de Newton pode exigir mais iterações.
-Portanto, o esforço computacional aumenta à medida que $e\to 1$.
+
+Portanto, quando $f'(E_k)$ é pequeno, a correção
+
+\[
+\frac{f(E_k)}{f'(E_k)}
+\]
+
+pode tornar-se grande, produzindo saltos maiores nas primeiras iterações.
+
+Isso pode ser observado nos valores iniciais da derivada:
+
+\[
+\begin{array}{c|c}
+\text{Caso} & f'(E_0) \\ \hline
+(i)   & 0,9122417438 \\
+(ii)  & 0,1044962512 \\
+(iii) & 0,0100494996
+\end{array}
+\]
+
+No caso (iii), por exemplo, mesmo começando em
+
+\[
+E_0=0,01,
+\]
+
+a primeira iteração produz
+
+\[
+E_1\approx0,9951072598.
+\]
+
+Consequentemente, à medida que $e\to1$, o método torna-se mais sensível ao
+chute inicial e pode exigir mais iterações, aumentando o esforço computacional.
 
 \subsection*{E.3}
 
-Para $e=0{,}99$ e $M=0{,}01$, tomamos
+Para o caso
+\[
+e=0,99,
+\qquad
+M=0,01,
+\]
+foi utilizado o chute inicial melhorado
+
 \[
 E_0=M+e\sin(M).
 \]
 
 Logo,
+
 \[
 E_0
-=0{,}01+0{,}99\sin(0{,}01)
-\approx 0{,}0198998350.
-\]
-
-Aplicando Newton,
-\[
-E_{k+1}
 =
-E_k-
-\frac{E_k-0{,}99\sin(E_k)-0{,}01}
-{1-0{,}99\cos(E_k)}.
+0,01+0,99\sin(0,01)
+\approx
+0,0198998350.
 \]
 
-As primeiras iterações são
-\begin{align*}
-E_1 &\approx 0{,}98103,\\
-E_2 &\approx 0{,}65110,\\
-E_3 &\approx 0{,}45773.
-\end{align*}
+Aplicando o método de Newton com
 
-Após 7 iterações,
 \[
-\boxed{E\approx 0{,}3422703165}.
+\varepsilon=10^{-8},
 \]
 
-Comparando os chutes iniciais:
-\begin{center}
-\begin{tabular}{lc}
-\hline
-\textbf{Chute inicial} & \textbf{Iterações}\\ \hline
-$E_0=M=0{,}01$ & 7\\
-$E_0=M+e\sin(M)\approx 0{,}019899835$ & 7\\ \hline
-\end{tabular}
-\end{center}
+obteve-se:
 
-Neste caso, o novo chute não reduziu o número de iterações.
+\[
+\begin{array}{c|c|c|c}
+k & E_k & f(E_k) & |E_k-E_{k-1}| \\ \hline
+1 & 0,9810303539 & 1,4827\times10^{-1} & 9,6113\times10^{-1} \\
+2 & 0,6510975267 & 4,1098\times10^{-2} & 3,2993\times10^{-1} \\
+3 & 0,4577254019 & 1,0236\times10^{-2} & 1,9337\times10^{-1} \\
+4 & 0,3662623293 & 1,7154\times10^{-3} & 9,1463\times10^{-2} \\
+5 & 0,3435907435 & 8,9320\times10^{-5} & 2,2672\times10^{-2} \\
+6 & 0,3422745953 & 2,8850\times10^{-7} & 1,3161\times10^{-3} \\
+7 & 0,3422703165 & 3,0416\times10^{-12} & 4,2787\times10^{-6}
+\end{array}
+\]
+
+Portanto,
+
+\[
+\boxed{E\approx0,3422703165\text{ rad}}
+\]
+
+em
+
+\[
+\boxed{7\text{ iterações}}.
+\]
+
+O resíduo final foi
+
+\[
+|f(E)|
+\approx
+3,0416\times10^{-12}
+<
+10^{-8}.
+\]
+
+Verificando na equação original,
+
+\[
+E-e\sin(E)
+\approx
+0,0100000000030
+\approx
+0,01.
+\]
+
+Comparando com o caso (iii) da E.2:
+
+\[
+\begin{array}{c|c|c}
+\text{Chute inicial} & E_0 & \text{Iterações} \\ \hline
+E_0=M
+& 0,01
+& 7 \\
+E_0=M+e\sin(M)
+& 0,0198998350
+& 7
+\end{array}
+\]
+
+Assim,
+
+\[
+\boxed{\text{neste caso, o chute melhorado não reduziu o número de iterações.}}
+\]
+
+Apesar disso, o valor inicial foi alterado de
+
+\[
+0,01
+\]
+
+para
+
+\[
+0,0198998350,
+\]
+
+modificando a trajetória inicial das iterações sem alterar a solução final.
 
 \subsection*{E.4}
 
-Para $e=0{,}99$ e $M=0{,}01$, temos
+Para o caso
 \[
-f(E)=E-0{,}99\sin E-0{,}01.
+e=0,99,
+\qquad
+M=0,01,
+\]
+foi aplicado o método da bissecção no intervalo
+
+\[
+[0,\pi].
 \]
 
-No intervalo $[0,\pi]$,
+A função é
+
 \[
-f(0)=-0{,}01<0
-\qquad\text{e}\qquad
-f(\pi)=\pi-0{,}01>0.
+f(E)=E-0,99\sin(E)-0,01.
 \]
 
-Logo, pelo Teorema de Bolzano, existe uma raiz no intervalo.
-Além disso,
-\[
-f'(E)=1-0{,}99\cos E>0,
-\]
-portanto a raiz é única.
+\subsubsection*{Fase I}
 
-Aplicando a bissecção com $\varepsilon=10^{-6}$:
+Nos extremos do intervalo,
+
 \[
-\boxed{E\approx 0{,}3422702123\ \text{rad}}
-\qquad\text{em 22 iterações.}
+f(0)=-0,01<0
 \]
 
-Comparação:
-\begin{center}
-\begin{tabular}{lc}
-\hline
-\textbf{Método} & \textbf{Iterações}\\ \hline
-Newton & 7\\
-Bissecção & 22\\ \hline
-\end{tabular}
-\end{center}
+e
 
-Assim, Newton é mais indicado quando a velocidade computacional é prioritária.
+\[
+f(\pi)
+=
+\pi-0,01
+\approx
+3,1315926536>0.
+\]
+
+Assim,
+
+\[
+f(0)f(\pi)
+\approx
+-0,0313159265<0.
+\]
+
+Portanto, como $f$ é contínua, existe pelo menos uma raiz no intervalo
+
+\[
+\boxed{(0,\pi)}.
+\]
+
+Logo, o método da bissecção pode ser aplicado e sua convergência é garantida.
+
+Utilizando
+
+\[
+\varepsilon=10^{-8},
+\]
+
+a bissecção produziu
+
+\[
+\boxed{E\approx0,3422702123\text{ rad}}
+\]
+
+em
+
+\[
+\boxed{22\text{ iterações}}.
+\]
+
+O resíduo final foi
+
+\[
+|f(E)|
+\approx
+7,0244\times10^{-9}
+<
+10^{-8}.
+\]
+
+Portanto, o critério de parada foi satisfeito pelo resíduo.
+
+Verificando na equação original,
+
+\[
+E-e\sin(E)
+\approx
+0,009999992976
+\approx
+0,01.
+\]
+
+\subsubsection*{Iterações da bissecção}
+
+\[
+\begin{array}{c|c|c}
+k & E_k & f(E_k) \\ \hline
+1  & 1,5707963268 & 5,70796\times10^{-1} \\
+2  & 0,7853981634 & 7,53625\times10^{-2} \\
+3  & 0,3926990817 & 3,84248\times10^{-3} \\
+4  & 0,1963495408 & -6,78988\times10^{-3} \\
+5  & 0,2945243113 & -2,85752\times10^{-3} \\
+6  & 0,3436116965 & 9,07416\times10^{-5} \\
+7  & 0,3190680039 & -1,47692\times10^{-3} \\
+8  & 0,3313398502 & -7,17339\times10^{-4} \\
+9  & 0,3374757733 & -3,19469\times10^{-4} \\
+10 & 0,3405437349 & -1,15920\times10^{-4} \\
+11 & 0,3420777157 & -1,29799\times10^{-5} \\
+12 & 0,3428447061 & 3,87830\times10^{-5} \\
+13 & 0,3424612109 & 1,28771\times10^{-5} \\
+14 & 0,3422694633 & -5,75264\times10^{-8} \\
+15 & 0,3423653371 & 6,40825\times10^{-6} \\
+16 & 0,3423174002 & 3,17498\times10^{-6} \\
+17 & 0,3422934317 & 1,55863\times10^{-6} \\
+18 & 0,3422814475 & 7,50528\times10^{-7} \\
+19 & 0,3422754554 & 3,46495\times10^{-7} \\
+20 & 0,3422724594 & 1,44483\times10^{-7} \\
+21 & 0,3422709613 & 4,34778\times10^{-8} \\
+22 & 0,3422702123 & -7,02437\times10^{-9}
+\end{array}
+\]
+
+\subsubsection*{Comparação com Newton}
+
+Para o mesmo problema, os resultados foram
+
+\[
+\begin{array}{c|c|c}
+\text{Método} & E\;(\text{rad}) & \text{Iterações} \\ \hline
+\text{Newton}
+& 0,342270316568
+& 7
+\\
+\text{Bissecção}
+& 0,342270212311
+& 22
+\end{array}
+\]
+
+Ambos os métodos convergiram para aproximadamente a mesma raiz, porém Newton
+necessitou apenas
+
+\[
+7
+\]
+
+iterações, enquanto a bissecção necessitou
+
+\[
+22.
+\]
+
+Portanto, para um software de rastreamento de satélites que precisa resolver a
+equação de Kepler milhões de vezes por segundo, o método de Newton é mais
+adequado devido à sua maior velocidade de convergência.
+
+\[
+\boxed{\text{Newton é recomendado quando o custo computacional é prioritário.}}
+\]
+
+A bissecção apresenta maior robustez e convergência garantida quando há mudança
+de sinal no intervalo, porém possui convergência mais lenta.
 
 \section*{Problema F \textnormal{---} Deflexão de viga (BÔNUS, +8 pontos)}
 

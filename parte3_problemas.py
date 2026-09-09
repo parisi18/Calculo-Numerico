@@ -568,6 +568,282 @@ def problema_D():
     )
 
 
+
+
+# =======================================================================
+# Problema E - Equacao de Kepler
+# =======================================================================
+
+import math
+
+from metodos import newton
+
+
+def problema_E():
+    import math
+
+from metodos import newton
+
+
+def problema_E():
+    print("\n\n### Problema E — Equação de Kepler ###\n")
+
+    # ============================================================
+    # DEFINIÇÕES GERAIS
+    # ============================================================
+
+    eps = 1e-8
+    max_iter = 200
+
+    # Equação de Kepler escrita como f(E) = 0
+    def f(E, e, M):
+        return E - e * math.sin(E) - M
+
+    # Derivada de f
+    def df(E, e):
+        return 1 - e * math.cos(E)
+
+
+    # ============================================================
+    # E.1 — COMETA HALLEY
+    # ============================================================
+
+    print("\n--- E.1 — Cometa Halley ---\n")
+
+    e = 0.967
+    M = 0.2
+    E0 = 1.0
+
+    # Funções específicas do caso para passar ao método de Newton
+    funcao = lambda E: f(E, e, M)
+    derivada = lambda E: df(E, e)
+
+    # Fase I
+    print("Fase I:")
+    print("f(1.0) =", funcao(1.0))
+    print("f(1.1) =", funcao(1.1))
+
+    raiz, historico = newton(
+        funcao,
+        derivada,
+        E0,
+        eps=eps,
+        max_iter=max_iter
+    )
+
+    print("\nResultado E.1:")
+    print("e =", e)
+    print("M =", M)
+    print("E0 =", E0)
+    print("Raiz E =", raiz)
+    print("Número de iterações =", len(historico))
+    print("Critério de parada: eps =", eps)
+
+    print("\nVerificação:")
+    print("E - e*sin(E) =", raiz - e * math.sin(raiz))
+
+    print("\nHistórico:")
+    for passo in historico:
+        print(passo)
+
+
+    # ============================================================
+    # E.2 — ROBUSTEZ DO MÉTODO DE NEWTON
+    # ============================================================
+
+    print("\n\n--- E.2 — Robustez do método de Newton ---\n")
+
+    casos = [
+        ("(i)",   0.10, 0.5),
+        ("(ii)",  0.90, 0.1),
+        ("(iii)", 0.99, 0.01),
+    ]
+
+    resultados_e2 = {}
+
+    for nome_caso, e, M in casos:
+
+        E0 = M
+
+        funcao = lambda E, e=e, M=M: f(E, e, M)
+        derivada = lambda E, e=e: df(E, e)
+
+        raiz, historico = newton(
+            funcao,
+            derivada,
+            E0,
+            eps=eps,
+            max_iter=max_iter
+        )
+
+        resultados_e2[nome_caso] = {
+            "e": e,
+            "M": M,
+            "E0": E0,
+            "raiz": raiz,
+            "iteracoes": len(historico),
+        }
+
+        print(f"\nCaso {nome_caso}")
+        print("e =", e)
+        print("M =", M)
+        print("E0 =", E0)
+
+        print("\nResultado:")
+        print("Raiz E =", raiz)
+        print("Número de iterações =", len(historico))
+        print("Resíduo |f(E)| =", abs(funcao(raiz)))
+        print("f'(E0) =", derivada(E0))
+
+        print("\nVerificação:")
+        print("E - e*sin(E) =", raiz - e * math.sin(raiz))
+
+        print("\nHistórico:")
+        for passo in historico:
+            print(passo)
+
+    print("\nResumo E.2:")
+    print(f"{'Caso':<8} {'E0':<18} {'Raiz':<20} {'Iterações'}")
+
+    for nome_caso, dados in resultados_e2.items():
+        print(
+            f"{nome_caso:<8}"
+            f"{dados['E0']:<18.10f}"
+            f"{dados['raiz']:<20.12f}"
+            f"{dados['iteracoes']}"
+        )
+
+
+    # ============================================================
+    # E.3 — CHUTE INICIAL MELHORADO
+    # ============================================================
+
+    print("\n\n--- E.3 — Chute inicial melhorado ---\n")
+
+    e = 0.99
+    M = 0.01
+
+    E0 = M + e * math.sin(M) #chute melhorado
+
+    funcao = lambda E: f(E, e, M)
+    derivada = lambda E: df(E, e)
+
+    raiz, historico = newton(
+        funcao,
+        derivada,
+        E0,
+        eps=eps,
+        max_iter=max_iter
+    )
+
+    print("e =", e)
+    print("M =", M)
+    print("E0 = M + e*sin(M) =", E0)
+
+    print("\nResultado E.3:")
+    print("Raiz E =", raiz)
+    print("Número de iterações =", len(historico))
+    print("Resíduo |f(E)| =", abs(funcao(raiz)))
+
+    print("\nVerificação:")
+    print("E - e*sin(E) =", raiz - e * math.sin(raiz))
+
+    print("\nHistórico:")
+    for passo in historico:
+        print(passo)
+
+    # Comparação com E.2 (iii)
+    caso_anterior = resultados_e2["(iii)"]
+
+    print("\nComparação E.2 (iii) x E.3:")
+    print(f"{'Chute inicial':<28} {'E0':<18} {'Iterações'}")
+
+    print(
+        f"{'E0 = M':<28}"
+        f"{caso_anterior['E0']:<18.10f}"
+        f"{caso_anterior['iteracoes']}"
+    )
+
+    print(
+        f"{'E0 = M + e*sin(M)':<28}"
+        f"{E0:<18.10f}"
+        f"{len(historico)}"
+    )
+
+        # ============================================================
+    # E.4 — COMPARAÇÃO COM O MÉTODO DA BISSECÇÃO
+    # ============================================================
+
+    print("\n\n--- E.4 — Comparação com a bissecção ---\n")
+
+    # Mesmo caso (iii)
+    e = 0.99
+    M = 0.01
+
+    funcao = lambda E: f(E, e, M)
+
+    # Intervalo exigido pelo enunciado
+    a = 0.0
+    b = math.pi
+
+    # Fase I
+    print("Fase I:")
+    print("a =", a)
+    print("b =", b)
+    print("f(a) =", funcao(a))
+    print("f(b) =", funcao(b))
+    print("f(a) * f(b) =", funcao(a) * funcao(b))
+
+    # Método da bissecção
+    raiz_bisseccao, historico_bisseccao = bisseccao(
+        funcao,
+        a,
+        b,
+        eps=eps,
+        max_iter=max_iter
+    )
+
+    print("\nResultado da bissecção:")
+    print("Raiz E =", raiz_bisseccao)
+    print("Número de iterações =", len(historico_bisseccao))
+    print("Resíduo |f(E)| =", abs(funcao(raiz_bisseccao)))
+    print("Critério de parada: eps =", eps)
+
+    print("\nVerificação:")
+    print(
+        "E - e*sin(E) =",
+        raiz_bisseccao - e * math.sin(raiz_bisseccao)
+    )
+
+    print("\nHistórico da bissecção:")
+    for passo in historico_bisseccao:
+        print(passo)
+
+    # ------------------------------------------------------------
+    # Comparação com Newton — caso (iii) da E.2
+    # ------------------------------------------------------------
+
+    caso_iii = resultados_e2["(iii)"]
+
+    print("\nComparação Newton x Bissecção:")
+    print(
+        f"{'Método':<15}"
+        f"{'Raiz':<20}"
+        f"{'Iterações'}"
+    )
+
+    print(
+        f"{'Newton':<15}"
+        f"{caso_iii['raiz']:<20.12f}"
+        f"{caso_iii['iteracoes']}"
+    )
+
+    print(
+        f"{'Bissecção':<15}"
+        f"{raiz_bisseccao:<20.12f}"
+        f"{len(historico_bisseccao)}"
+    )
+
 # =======================================================================
 # Problema F (BONUS) - Deflexao de viga
 # =======================================================================
@@ -742,5 +1018,7 @@ if __name__ == "__main__":
     problema_C()
     print("\n" + "=" * 70)
     problema_D()
+    print("\n" + "=" * 70)
+    problema_E()
     print("\n" + "=" * 70)
     problema_F()
